@@ -12,14 +12,14 @@ class Uploader
     protected $fileTypes = [];
     protected $maxFileSize;
     protected $file;
-    protected $name;
+    protected $prefixName;
     protected $uploadPath;
     protected $filePath = null;
     protected $fieldName;
 
-    public function __construct($file, $fieldName, $fileTypes, $name = null)
+    public function __construct($file, $fieldName, $fileTypes, $prefixName)
     {
-        $this->name = is_null($name) ? '' : $name . '_';
+        $this->prefixName = is_null($prefixName) ? '' : $prefixName . '_';
         $this->file = $file;
         $this->fieldName = $fieldName;
         $this->initialize($fileTypes);
@@ -53,13 +53,14 @@ class Uploader
 
     protected function checkUpload()
     {
+        $filePath = $this->uploadPath . $this->prefixName . $this->file['name'];
         if (
             move_uploaded_file(
-                $this->name . $this->file['tmp_name'],
-                ROOT . $this->uploadPath . $this->file['name']
+                 $this->file['tmp_name'],
+                ROOT . $filePath
             )
         ) {
-            $this->filePath = $this->uploadPath . $this->file['name'];
+            $this->filePath = $filePath;
             return true;
         }
         $this->addErrors([$this->fieldName => ['Не удалось загрузить файл, попробуйте ещё раз']]);

@@ -21,16 +21,18 @@
         <div class="col py-3">
             <ul class="list-unstyled">
                 <?php foreach ($comments as $comment) : ?>
-                    <li class="media">
-<!--                        <img src="..." class="mr-3" alt="...">-->
-                        <div class="media-body">
-                            <p>Аватарка автора</p>
-                            <p>ФИО автора</p>
-                            <p>Дата коммента</p>
-                            <h5 class="mt-0 mb-1">Comment Title</h5>
-                            <?= $comment->text; ?>
-                        </div>
-                    </li>
+                   <?php if ($comment['is_applied'] = '1' || (isset($_SESSION['auth_subsystem']) && $_SESSION['auth_subsystem']['id'] == $comment['author_id'])) : ?>
+                        <li class="media">
+    <!--                        <img src="..." class="mr-3" alt="...">-->
+                            <div class="media-body">
+                                <p>Аватарка автора</p>
+                                <p>ФИО автора</p>
+                                <p>Дата коммента</p>
+                                <h5 class="mt-0 mb-1">Comment Title</h5>
+                                <?= $comment->text; ?>
+                            </div>
+                        </li>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </ul>
         </div>

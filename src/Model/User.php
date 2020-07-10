@@ -13,6 +13,7 @@ class User extends Model
     protected $table = 'users';
 
     protected $attributes = [
+        'id' => '',
         'login' => '',
         'password' => '',
         'email' => '',
@@ -94,9 +95,9 @@ class User extends Model
         return false;
     }
 
-    public  function uploadImg($file, $fieldName)
+    public  function uploadImg($file, $fieldName, $prefixName)
     {
-            return parent::uploadFile($file, $fieldName, 'img');
+            return parent::uploadFile($file, $fieldName, 'img', $prefixName);
     }
 
     public function deleteImg()
@@ -115,6 +116,7 @@ class User extends Model
         if ($updateRows !== 0) {
             $_SESSION['success'] = 'Данные успешно обновлены';
             $_SESSION['auth_subsystem'] = $this->getAttributes();
+            Subscribed::addInfo($this->email);
             $_SESSION['auth_subsystem']['password'] = '';
         } else {
             $_SESSION['error']['page'] = 'Ошибка обновления, попробуйте позже';

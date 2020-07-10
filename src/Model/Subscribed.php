@@ -66,9 +66,11 @@ class Subscribed extends Model
         return self::all();
     }
 
-    public function addInfo()
+    public static function addInfo($email)
     {
-        if ($this->isSubscribed()) {
+        $sub = new self;
+        $sub->load($email);
+        if ($sub->isSubscribed()) {
             $_SESSION['auth_subsystem']['is_subscribed'] = 'yes';
         } else {
             $_SESSION['auth_subsystem']['is_subscribed'] = 'no';

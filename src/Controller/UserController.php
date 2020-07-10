@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Exception\NoRightsException;
 
+use App\Model\Subscribed;
 use function helpers\h;
 use function helpers\redirect;
 
@@ -20,7 +21,7 @@ class UserController extends \App\Controller
             $user->load($data);
 
             if ($user->login()) {
-                $this->getSubsInfo($_SESSION['auth_subsystem']['email']);
+                Subscribed::addInfo($_SESSION['auth_subsystem']['email']);
                 $_SESSION['success'] = 'Вы успешно вошли';
                 redirect('/');
             } else {
@@ -52,7 +53,7 @@ class UserController extends \App\Controller
                 $_SESSION['success'] = 'Вы успешно зарегистрированы';
                 $user->password = '';
                 $_SESSION['auth_subsystem'] = $user->getAttributes();
-                $this->getSubsInfo($user->email);
+                Subscribed::addInfo($user->email);
 
                 redirect('/');
             } else {
@@ -94,7 +95,7 @@ class UserController extends \App\Controller
                     $isCorrectPassword = true;
                 }
 
-                $file = $_FILES['img']['size'] !== 0 ? $user->uploadImg($_FILES['img'], 'img', $user->name) : null;
+                $file = $_FILES['img']['size'] !== 0 ? $user->uploadImg($_FILES['img'], 'img', $user->login) : null;
 
                 if (
                     !$user->validate($updatedData) ||

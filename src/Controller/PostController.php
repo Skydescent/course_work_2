@@ -11,6 +11,7 @@ class PostController extends \App\Controller
     {
         $post = Model\PostsList::whereId($id)->first();
         $comments = Model\Comments::where('post_id', $id)->get();
+        //->join('contacts', 'users.id', '=', 'contacts.user_id')
         return $this->getView(__METHOD__, ['post'=> $post, 'comments' => $comments]);
     }
 

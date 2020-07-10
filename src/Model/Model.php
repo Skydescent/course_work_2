@@ -90,9 +90,9 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         return $newData;
     }
 
-    public function uploadFile($file, $fieldName, $fileTypes)
+    public function uploadFile($file, $fieldName, $fileTypes, $prefixName)
     {
-        $uploader = new Helpers\Uploader($file, $fieldName, $fileTypes);
+        $uploader = new Helpers\Uploader($file, $fieldName, $fileTypes, $prefixName);
         if ($uploader->upload()) {
             return $uploader->getUploadedFilePath();
         }

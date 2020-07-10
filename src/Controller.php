@@ -21,11 +21,11 @@ abstract class Controller
         return new View\View($layout, $options);
     }
 
-    protected function getSubsInfo($email)
-    {
-        $sub = new Model\Subscribed();
-        //$sub = new Subscribed();
-        $sub->load(['email' => $email]);
-        $sub->addInfo();
-    }
+//    protected function getSubsInfo($email)
+//    {
+//        $sub = new Model\Subscribed();
+//        //$sub = new Subscribed();
+//        $sub->load(['email' => $email]);
+//        $sub->addInfo();
+//    }
 }
