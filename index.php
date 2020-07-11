@@ -17,7 +17,7 @@ require_once 'bootstrap.php';
 $router = new Router();
 
 
-$router->get('/post/*', Controller\PostController::class . '@post');
+$router->request('/post/*', Controller\PostController::class . '@post');
 $router->request('/page/*', Controller\MainController::class . '@index');
 $router->request('/', Controller\MainController::class . '@index');
 

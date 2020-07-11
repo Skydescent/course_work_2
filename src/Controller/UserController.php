@@ -48,6 +48,7 @@ class UserController extends \App\Controller
                 redirect();
             }
             $user->password = password_hash($user->password, PASSWORD_DEFAULT);
+            unset($user->id);
 
             if ($user->save()) {
                 $_SESSION['success'] = 'Вы успешно зарегистрированы';

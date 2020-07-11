@@ -17,6 +17,7 @@ class User extends Model
         'login' => '',
         'password' => '',
         'email' => '',
+        'role' => 'registered',
         'img' =>'',
         'about' => '',
     ];
