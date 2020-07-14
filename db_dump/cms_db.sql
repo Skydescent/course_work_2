@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.20, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
--- Host: localhost    Database: cms_db
+-- Host: 127.0.0.1    Database: cms_db
 -- ------------------------------------------------------
--- Server version	8.0.15
+-- Server version	5.7.25
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -23,15 +23,16 @@ DROP TABLE IF EXISTS `comments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `comments` (
-  `id` int(12) NOT NULL,
+  `id` int(12) NOT NULL AUTO_INCREMENT,
   `text` text COLLATE utf8_bin NOT NULL,
   `post_id` int(12) NOT NULL,
   `author_id` int(12) NOT NULL,
   `is_applied` tinyint(2) NOT NULL,
+  `created_at` date NOT NULL,
   PRIMARY KEY (`id`),
   KEY `comment_post_id_idx` (`post_id`),
   CONSTRAINT `comment_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +41,7 @@ CREATE TABLE `comments` (
 
 LOCK TABLES `comments` WRITE;
 /*!40000 ALTER TABLE `comments` DISABLE KEYS */;
-INSERT INTO `comments` VALUES (1,'Отличная статья',1,1,0),(2,'Ставлю лайк статье',1,2,0),(3,'Пишите ещё, очень понравилось',1,3,0);
+INSERT INTO `comments` VALUES (1,'Отличная статья',1,7,0,'2020-06-20'),(2,'Ставлю лайк статье',1,2,0,'2020-06-23'),(3,'Пишите ещё, очень понравилось',1,3,0,'2020-07-03'),(4,'Супер!',1,13,0,'2020-07-11');
 /*!40000 ALTER TABLE `comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -53,8 +54,8 @@ DROP TABLE IF EXISTS `menu`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `menu` (
   `id` int(12) NOT NULL,
-  `name` varchar(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `href` varchar(60) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `name` varchar(45) COLLATE utf8_bin NOT NULL,
+  `href` varchar(60) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -78,9 +79,9 @@ DROP TABLE IF EXISTS `posts`;
 CREATE TABLE `posts` (
   `id` int(12) NOT NULL AUTO_INCREMENT,
   `created_at` date NOT NULL,
-  `img` varchar(90) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `title` varchar(60) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `text` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `img` varchar(90) COLLATE utf8_bin NOT NULL,
+  `title` varchar(60) COLLATE utf8_bin DEFAULT NULL,
+  `text` text COLLATE utf8_bin,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -163,7 +164,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`,`role`),
   UNIQUE KEY `login_UNIQUE` (`login`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,7 +173,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (7,'Mih','$2y$10$ZKEZq81IQbau3bk8Kl5L.eXvO.n2bUzwapnLQRq3DsqnorvJWPcKW','miha1977@mih.com','registered','/uploads/img/Mih_cross.jpg','Здравствуйте! Я любитель истории крестовых походов '),(8,'Nikky','$2y$10$lklg.6MOYoDBn6gDeHCD5.j3ffJ17YbFRKJ3M7Lptji6YuPNprgVu','nikky@mail.ru','registered','','Интересуюсь первым и четвёртым крестовыми походами'),(9,'Kirill','$2y$10$9gWOCpPQf5CHCKNBS6hfm.eDljyVTZpK2wP5x/Qif87lzDSZU6xv6','kir@mail.ru','registered','','Deus vult!'),(10,'Monk','$2y$10$gTcPb40YRCZdcgpx9tB5jusGMNefUi6x8J.YzHXKr01lQOiFO38ku','mnk@mail.ru','registered','',''),(11,'Knight','$2y$10$Gw4qhGcCdmXKl2PQVonKp.YQyGUnQ1ECg3HOqqrTSKau1GHleaSsq','knght@gmail.com','registered','',''),(12,'Volodiya','$2y$10$wAJLRW7jwlkVXjkq.GE2Jux4qY6CEMEW//CvvIL2nJ9.5OcNceMci','volod@gmail.com','registered','','');
+INSERT INTO `users` VALUES (7,'Mih','$2y$10$ZKEZq81IQbau3bk8Kl5L.eXvO.n2bUzwapnLQRq3DsqnorvJWPcKW','miha1977@mih.com','registered','/uploads/img/Mih_cross.jpg','Здравствуйте! Я любитель истории крестовых походов '),(8,'Nikky','$2y$10$lklg.6MOYoDBn6gDeHCD5.j3ffJ17YbFRKJ3M7Lptji6YuPNprgVu','nikky@mail.ru','registered','','Интересуюсь первым и четвёртым крестовыми походами'),(9,'Kirill','$2y$10$9gWOCpPQf5CHCKNBS6hfm.eDljyVTZpK2wP5x/Qif87lzDSZU6xv6','kir@mail.ru','registered','','Deus vult!'),(10,'Monk','$2y$10$gTcPb40YRCZdcgpx9tB5jusGMNefUi6x8J.YzHXKr01lQOiFO38ku','mnk@mail.ru','registered','',''),(11,'Knight','$2y$10$Gw4qhGcCdmXKl2PQVonKp.YQyGUnQ1ECg3HOqqrTSKau1GHleaSsq','knght@gmail.com','registered','',''),(12,'Volodiya','$2y$10$wAJLRW7jwlkVXjkq.GE2Jux4qY6CEMEW//CvvIL2nJ9.5OcNceMci','volod@gmail.com','registered','',''),(13,'Grom','$2y$10$LUhx98T4W9acH6EbstAXregk3yt/C8YGXihfQG8GhGKbBwhtlxZ2K','grm@mail.ru','registered','',''),(14,'Bob','$2y$10$QLhaEQ58f.3XW6tp2CyhoeCTWkHvFExEpExshNzl1aIVg8z1.sLSG','bob13@yah.com','registered','','My name is Bob!');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -193,4 +194,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-10 17:33:06
+-- Dump completed on 2020-07-14  8:59:02
