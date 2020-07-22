@@ -49,8 +49,10 @@ class UserController extends \App\Controller
             }
             $user->password = password_hash($user->password, PASSWORD_DEFAULT);
             unset($user->id);
+            unset($user->role);
 
             if ($user->save()) {
+                $user->setRole($user->id, 'registered');
                 $_SESSION['success'] = 'Вы успешно зарегистрированы';
                 $user->password = '';
                 $_SESSION['auth_subsystem'] = $user->getAttributes();

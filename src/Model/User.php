@@ -4,6 +4,7 @@
 namespace App\Model;
 
 
+use Illuminate\Support\Facades\DB;
 use function helpers\debug;
 use function helpers\redirect;
 
@@ -17,7 +18,7 @@ class User extends Model
         'login' => '',
         'password' => '',
         'email' => '',
-        'role' => 'registered',
+        'role' => '',
         'img' =>'',
         'about' => '',
     ];
@@ -146,8 +147,33 @@ class User extends Model
         return false;
     }
 
+    public function getRole($id)
+    {
+        $role = Roles::query()
+            ->select('name')
+            ->leftJoin('user-role', 'id', '=', 'user-role.role_id')
+            ->leftJoin('users', 'user-role.user_id', '=', 'users.id')
+            ->where('users.id', '=', $id)
+            ->value('name');
+        return $role;
+    }
+    
+    public function setRole($id, $role)
+    {
+        $roleId = Roles::query()
+            ->select('id')
+            ->where('name', '=', $role)
+            ->value('id');
+        DB::table('user-role')->insert(
+            ['user_id' => $id, 'role_id' => $roleId]
+        );
+    }
+
     protected function getDbUser($field = 'login')
     {
-        return parent::getDbUnit($field);
+        $user = parent::getDbUnit($field);
+        $user->original['role'] = $this->getRole($user->original['id']);
+        return $user;
     }
+
 }
