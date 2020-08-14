@@ -176,4 +176,9 @@ class User extends Model
         return $user;
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany('App\Model\Roles');
+    }
+
 }
