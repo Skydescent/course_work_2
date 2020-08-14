@@ -12,4 +12,9 @@ class Roles extends Model
         'name' => ''
     ];
     protected $table = 'roles';
+
+    public function users()
+    {
+        return $this->belongsToMany('App\Model\User');
+    }
 }
