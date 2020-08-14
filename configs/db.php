@@ -3,6 +3,6 @@ return [
     'driver' => 'mysql',
     'host' => 'localhost',
     'username' => 'root',
-    'password' => '',
+    'password' => 'root',
     'database' => 'cms_db',
 ];
