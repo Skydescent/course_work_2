@@ -30,14 +30,24 @@ class Router
     public function dispatch()
     {
         $method = $_SERVER['REQUEST_METHOD'];
-        $uri = $_SERVER['REQUEST_URI'];
+        $uri = $this->removeQueryString($_SERVER['REQUEST_URI']);
 
         foreach ($this->routes[$method] as $route) {
             if ($route->match($method, $uri)) {
                 return $route->run($uri);
             }
         }
-
         throw new Exception\NotFoundException();
+    }
+
+    protected function removeQueryString($url)
+    {
+        if ($url) {
+            if (strpos($url, '?') !== false) {
+                return explode('?', $url)[0];
+            } else {
+                return $url;
+            }
+        }
     }
 }

@@ -11,9 +11,9 @@ use function helpers\redirect;
 
 class MainController extends \App\Controller
 {
-    public function index($currentPage = 1)
+    public function index()
     {
-
+        $currentPage = $this->getCurrentPage();
         $total = Model\PostsList::query()->count();
         $perpage = 2;
         $uri = '/';

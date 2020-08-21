@@ -41,7 +41,7 @@
             </div>
             <div class="form-check">
                 <input name="is_apply_rules" type="checkbox" class="form-check-input" id="is_apply_rules"  <?= isset($_SESSION['form_data']['is_apply_rules']) ? 'checked' : ''; ?>>
-                <label class="form-check-label" for="is_apply_rules">Cогласие с <a href="/rules">правилами</a> сайта</label>
+                <label class="form-check-label" for="is_apply_rules">Cогласие с <a href="/static/rules">правилами</a> сайта</label>
                 <?php if (isset($_SESSION['error']['is_apply_rules'])) : ?>
                     <div class="p-1 mt-2 alert alert-warning">
                         <?= $_SESSION['error']['is_apply_rules']; unset($_SESSION['error']['is_apply_rules']);?>

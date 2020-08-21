@@ -1,16 +1,20 @@
 <?php
-require 'helpers.php';
 
-class Controller
-{
-    public function sayYourName()
-    {
-        return __CLASS__;
-    }
-}
+//class Controller
+//{
+//    public function sayYourName()
+//    {
+//        return __CLASS__;
+//    }
+//}
+//
+//$tst = new Controller();
+//var_dump(explode('Controller', $tst->sayYourName())[0]);
 
-$tst = new Controller();
-var_dump(explode('Controller', $tst->sayYourName())[0]);
+$str = 'App\Controller\AdminController';
+$newStr = str_replace(['App\Controller\\', 'Controller'], ['',''], $str);
+$strPos = strpos($str,'App\Controller\\');
+var_dump($newStr);
 
 //$congfigs = require 'configs/file.php';
 //$fileTypes = \helpers\array_get($congfigs, 'fileTypes.img');

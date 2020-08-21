@@ -3,6 +3,7 @@ namespace App;
 
 use App\View;
 use App\Model;
+use function helpers\h;
 
 abstract class Controller
 {
@@ -15,17 +16,18 @@ abstract class Controller
     protected function getView($method =  NULL, $options = NULL)
     {
         $layout = is_null($method) ? DEFAULT_LAYOUT : $this->getLayoutName($method);
-        $path = explode('Controller', ltrim(get_class($this), 'App\Controller\\'))[0];
+        $path = str_replace(['App\Controller\\', 'Controller'], ['',''], get_class($this));
         $layout = $layout ?? DEFAULT_LAYOUT;
         $layout = $path . '.' . $layout;
         return new View\View($layout, $options);
     }
-
-//    protected function getSubsInfo($email)
-//    {
-//        $sub = new Model\Subscribed();
-//        //$sub = new Subscribed();
-//        $sub->load(['email' => $email]);
-//        $sub->addInfo();
-//    }
+    
+    protected function getCurrentPage()
+    {
+        if (isset($_GET['page'])) {
+            return  (int) h($_GET['page']);
+        } else {
+            return 1;
+        }
+    }
 }

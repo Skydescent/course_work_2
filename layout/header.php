@@ -9,24 +9,52 @@
             <li class="nav-item">
                 <a class="nav-link" href="/">Главная <span class="sr-only">(current)</span></a>
             </li>
-            <?php if (!isset($_SESSION['auth_subsystem'])):?>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Войти
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                        <a class="dropdown-item" href="/user/login">Авторизация</a>
-                        <a class="dropdown-item" href="/user/signup">Регистрация</a>
-
-                </div>
-            </li>
-            <?php else: ?>
-            <li>
+            <?php if (
+                    isset($_SESSION['auth_subsystem']) &&
+                    ($_SESSION['auth_subsystem']['role'] == 'admin' || $_SESSION['auth_subsystem']['role'] == 'manager')
+            ):
+                ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="/user/profile">Личный кабинет</a>
+                    <a class="nav-link" href="/admin/posts/">Статьи</a>
                 </li>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/comments/">Комментарии</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/pages/">Страницы</a>
+                </li>
+                <?php if ($_SESSION['auth_subsystem']['role'] == 'admin'):?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/users/">Пользователи</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/signups/">Подписки</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/settings/">Доп. настройки</a>
+                    </li>
+                <?php endif; ?>
+            <?php endif; ?>
+
+
+            <?php if (!isset($_SESSION['auth_subsystem'])):?>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Войти
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                            <a class="dropdown-item" href="/user/login">Авторизация</a>
+                            <a class="dropdown-item" href="/user/signup">Регистрация</a>
+
+                    </div>
+                </li>
+            <?php else: ?>
+                <li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/profile">Личный кабинет</a>
+                    </li>
+                </li>
             <?php endif; ?>
         </ul>
     </div>

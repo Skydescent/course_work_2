@@ -4,7 +4,7 @@
 namespace App\Model;
 
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB as DB;
 use function helpers\debug;
 use function helpers\redirect;
 
@@ -164,6 +164,7 @@ class User extends Model
             ->select('id')
             ->where('name', '=', $role)
             ->value('id');
+
         DB::table('user-role')->insert(
             ['user_id' => $id, 'role_id' => $roleId]
         );

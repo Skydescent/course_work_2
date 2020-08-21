@@ -53,42 +53,42 @@ class Pagination
 
         //формируем ссылку на предыдущую страницу
         if ($this->currentPage > 1) {
-            $back = "<li class='page-item'><a class='page-link' href='{$this->uri}page/" .
+            $back = "<li class='page-item'><a class='page-link' href='{$this->uri}?page=" .
                 ($this->currentPage - 1) . "'>&lt;</a></li>";
         }
 
         //формируем ссылку на следующую страницу
         if ($this->currentPage < $this->countPages) {
-            $forward = "<li class='page-item'><a class='page-link' href='{$this->uri}page/" .
+            $forward = "<li class='page-item'><a class='page-link' href='{$this->uri}?page=" .
                 ($this->currentPage + 1) . "'>&gt;</a></li>";
         }
 
         //формируем ссылку на первую страницу
         if ($this->currentPage > 3) {
-            $startpage = "<li class='page-item'><a class='page-link' href='{$this->uri}page/1'>&laquo;</a></li>";
+            $startpage = "<li class='page-item'><a class='page-link' href='{$this->uri}?page=1'>&laquo;</a></li>";
         }
 
         if ($this->currentPage < ($this->countPages - 2)) {
-            $endpage = "<li class='page-item'><a class='page-link' href='{$this->uri}page/($this->countPages)'>&raquo;</a></li>";
+            $endpage = "<li class='page-item'><a class='page-link' href='{$this->uri}?page=($this->countPages)'>&raquo;</a></li>";
         }
 
         if ($this->currentPage - 2 > 0) {
-            $page2left = "<li class='page-item'><a class='page-link' href='{$this->uri}page/" .
+            $page2left = "<li class='page-item'><a class='page-link' href='{$this->uri}?page=" .
                 ($this->currentPage - 2) . "'>" . ($this->currentPage - 2) . "</a></li>";
         }
 
         if ($this->currentPage - 1 > 0) {
-            $page1left = "<li class='page-item'><a class='page-link' href='{$this->uri}page/" .
+            $page1left = "<li class='page-item'><a class='page-link' href='{$this->uri}?page=" .
                 ($this->currentPage - 1) . "'>" . ($this->currentPage - 1) . "</a></li>";
         }
 
         if ($this->currentPage + 1 <= $this->countPages) {
-            $page1right = "<li class='page-item'><a class='page-link' href='{$this->uri}page/" .
+            $page1right = "<li class='page-item'><a class='page-link' href='{$this->uri}?page=" .
                 ($this->currentPage + 1) . "'>" . ($this->currentPage + 1) . "</a></li>";
         }
 
         if ($this->currentPage + 2 < $this->countPages) {
-            $page2right = "<li class='page-item'><a class='page-link' href='{$this->uri}page/" .
+            $page2right = "<li class='page-item'><a class='page-link' href='{$this->uri}?page=" .
                 ($this->currentPage + 2) . "'>" . ($this->currentPage + 2) . "</a></li>";
         }
 

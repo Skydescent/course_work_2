@@ -18,9 +18,7 @@ $router = new Router();
 
 
 $router->request('/post/*', Controller\PostController::class . '@post');
-$router->request('/page/*', Controller\MainController::class . '@index');
 $router->request('/', Controller\MainController::class . '@index');
-
 $router->request('/*/*');
 
 $application = new Application($router);
