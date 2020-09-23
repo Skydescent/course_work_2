@@ -73,8 +73,10 @@ class Route
             if (is_null($this->getCallback())) {
                 $class = 'App\Controller\\' . $this->upperCamelCase($matches[0]) . 'Controller';
                 $method = $matches[1];
-                if (!class_exists($class) || !method_exists(new $class, $method)) {
-                    throw new Exception\NotFoundException();
+                if (!class_exists($class) ||
+                    (!method_exists(new $class, $method) && !method_exists(new $class, '__call'))
+                ) {
+                        throw new Exception\NotFoundException();
                 }
                 $_SESSION['debug'] = array_values(array_slice($matches, 2));
                 return call_user_func_array([new $class, $method], array_values(array_slice($matches, 2)));
