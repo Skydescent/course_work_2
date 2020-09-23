@@ -4,7 +4,7 @@
 namespace App\Model;
 
 
-class Roles extends Model
+class Role extends Model
 {
     public $timestamps = false;
     protected $attributes = [
@@ -15,6 +15,6 @@ class Roles extends Model
 
     public function users()
     {
-        return $this->belongsToMany('App\Model\User');
+        return $this->hasMany('App\Model\User');
     }
 }

@@ -18,7 +18,13 @@
         </div>
     </div>
     <?php foreach ($comments as $comment) : ?>
-        <?php if ($comment['is_applied'] == '1' || (isset($_SESSION['auth_subsystem']) && ($_SESSION['auth_subsystem']['id'] == $comment['author_id'] || $_SESSION['auth_subsystem']['role'] == 'admin' || $_SESSION['auth_subsystem']['role'] == 'manager'))) : ?>
+        <?php if ($comment['is_applied'] == '1' ||
+                isset($_SESSION['auth_subsystem']) &&
+                (
+                        $_SESSION['auth_subsystem']['id'] == $comment['author_id'] ||
+                        $_SESSION['auth_subsystem']['role'] == 'admin' ||
+                        $_SESSION['auth_subsystem']['role'] == 'manager')
+        ) : ?>
             <div class="card bg-light mx-lg-5">
                 <div class="row no-gutters">
                     <div class="col-2 py-3">

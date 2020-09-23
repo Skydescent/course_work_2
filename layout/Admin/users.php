@@ -1,6 +1,6 @@
 <div class="row row mx-lg-5">
     <div class="col">
-        <h1><?= $data['title'] ?></h1>
+        <h3><?= $data['title'] ?></h3>
     </div>
 </div>
 <table class="table">
@@ -33,7 +33,7 @@
                     <form class="form-inline" action="/admin/users?page=<?= $data['pagination']->currentPage?>" method="post">
                         <select class="custom-select my-1 mr-sm-2" name="role">
                             <?php foreach ($data['roles'] as $role) : ?>
-                                <?php $value = $role->name === $user->role ? 'selected' :  'value=' . $user->id . '_' . $role->name ?>
+                                <?php $value = $role->name === $user->role ? 'selected' :  'value=' . $user->id . '_' . $role->id ?>
                                 <option  <?= $value?>><?= $role->name ?></option>
                             <?php endforeach;?>
                         </select>
@@ -41,7 +41,14 @@
                     </form>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-outline-danger">Деактивировать</button>
+                    <form action="/admin/users?page=<?= $data['pagination']->currentPage?>" method="post">
+                        <?php if ($user->is_active == '1') :?>
+                            <button type="submit" name="active" value="<?= $user->id ?>_0" class="btn btn-outline-danger">Деактивировать</button>
+                        <?php else : ?>
+                            <button type="submit" name="active" value="<?= $user->id ?>_1" class="btn btn-outline-success">Активировать</button>
+                        <?php endif; ?>
+
+                    </form>
                 </td>
             <?php endif; ?>
         </tr>
@@ -49,9 +56,7 @@
 </table>
 <div class="row justify-content-md-center">
     <div class="text-center">
-        <?php if ($data['pagination']->countPages > 1) : ?>
-            <?= $data['pagination']?>
-        <?php endif;?>
+        <?= $data['pagination']?>
     </div>
 </div>
 

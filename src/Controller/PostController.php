@@ -11,10 +11,14 @@ class PostController extends \App\Controller
 {
     public  function post($id)
     {
-        $post = Model\PostsList::whereId($id)->first();
-
+        $post = Model\PostsList::whereId($id)->where('is_active', '<>', '0')->first();
+        if (is_null($post)) {
+            $_SESSION['error']['page'] = 'Доступ к статье закрыт, либо она не существует';
+            redirect();
+        }
         $comments = Model\Comment::query()
-            ->join('users', 'author_id', '=', 'users.id')
+            ->where('post_id', '=', $id)
+            ->LeftJoin('users', 'author_id', '=', 'users.id')
             ->get();
 
         if (!empty($_POST)) {

@@ -17,9 +17,6 @@ function array_get(array $array, string $key, $default = null)
             if (!next($keys)) {
                 return $array[$shortKey];
             }
-//            if (count($keys) === 1) {
-//                return $array[$shortKey];
-//            }
             if (gettype($array[$shortKey]) === 'array') {
                 $array = $array[$shortKey];
             } else {

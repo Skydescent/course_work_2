@@ -28,7 +28,7 @@
                         <a class="nav-link" href="/admin/users/">Пользователи</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/signups/">Подписки</a>
+                        <a class="nav-link" href="/admin/subscriptions/">Подписки</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/settings/">Доп. настройки</a>
@@ -39,7 +39,8 @@
 
             <?php if (!isset($_SESSION['auth_subsystem'])):?>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+
                         Войти
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">

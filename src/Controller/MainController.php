@@ -13,14 +13,14 @@ class MainController extends \App\Controller
 {
     public function index()
     {
-        $currentPage = $this->getCurrentPage();
-        $total = Model\PostsList::query()->count();
+        $total = Model\PostsList::query()->where('is_active', '<>', '0')->count();
         $perpage = 2;
-        $uri = '/';
-        $pagination = new Pagination($currentPage,$perpage,$total, $uri);
+        $pagination = $this->paginate($total, $perpage, '/');
+
         $start = $pagination->getStart();
         $posts = Model\PostsList::query()
             ->select('id', 'title', 'text', 'created_at', 'img')
+            ->where('is_active', '<>', '0')
             ->orderBy('created_at', 'desc')
             ->skip($start)
             ->take($perpage)

@@ -25,7 +25,6 @@ class UserController extends \App\Controller
                 $_SESSION['success'] = 'Вы успешно вошли';
                 redirect('/');
             } else {
-                $_SESSION['error']['page'] = 'Логин или пароль введены неверно';
                 redirect();
             }
 
@@ -49,10 +48,9 @@ class UserController extends \App\Controller
             }
             $user->password = password_hash($user->password, PASSWORD_DEFAULT);
             unset($user->id);
-            unset($user->role);
+            $user->role_id = 3;
 
             if ($user->save()) {
-                $user->setRole($user->id, 'registered');
                 $_SESSION['success'] = 'Вы успешно зарегистрированы';
                 $user->password = '';
                 $_SESSION['auth_subsystem'] = $user->getAttributes();

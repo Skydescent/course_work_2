@@ -10,6 +10,7 @@ final class Config
 		$this->configs['db'] = require 'configs/db.php';
 		$this->configs['valid_err_msgs'] = require 'configs/valid_err_msgs.php';
 		$this->configs['file'] = require 'configs/file.php';
+        $this->configs['pagination'] = require 'configs/pagination.php';
 	}
 
 	public static function getInstance() : Config

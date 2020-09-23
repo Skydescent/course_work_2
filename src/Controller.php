@@ -1,13 +1,14 @@
 <?php
 namespace App;
 
+use App\Helpers\Pagination;
 use App\View;
 use App\Model;
 use function helpers\h;
+use function helpers\redirect;
 
 abstract class Controller
 {
-
     protected function getLayoutName($method)
     {
         return explode('::', $method)[1];
@@ -29,5 +30,29 @@ abstract class Controller
         } else {
             return 1;
         }
+    }
+
+    protected function paginate($model, $uri, bool $isSelect = false)
+    {
+        $currentPage = $this->getCurrentPage();
+        if (is_int($model)) {
+            $total = $model;
+        } else {
+            $method = $model . '::query';
+            $total = $method()->count();
+        }
+
+        $pagination = new Pagination($currentPage, $total, $uri, $isSelect);
+        return $pagination;
+    }
+
+    protected function update($name, $model, $field)
+    {
+        [$id, $newVal] = explode('_', h($_POST[$name]));
+        $method = $model . '::find';
+        $user = $method($id);
+        $user[$field] = $newVal;
+        $user->save();
+        redirect();
     }
 }

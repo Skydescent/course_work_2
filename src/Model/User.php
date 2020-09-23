@@ -18,9 +18,10 @@ class User extends Model
         'login' => '',
         'password' => '',
         'email' => '',
-        'role' => '',
+        'role_id' => '',
         'img' =>'',
         'about' => '',
+        'is_active' => ''
     ];
 
     protected $rules = [
@@ -62,6 +63,10 @@ class User extends Model
             $user = $this->getDbUser();
             if ($user !== false) {
                 if (password_verify($password, $user->password)) {
+                    if($user->is_active !== 1) {
+                        $_SESSION['error']['page'] = 'Ваша учётная запись Деактивирована, обратитесь к администрации сайта';
+                        return false;
+                    }
                     foreach ($user->original as $k => $v) {
                         if ($k != 'password') {
                             $_SESSION['auth_subsystem'][$k] = $v;
@@ -71,6 +76,7 @@ class User extends Model
                 }
             }
         }
+        $_SESSION['error']['page'] = 'Логин или пароль введены неверно';
         return false;
     }
 
@@ -147,39 +153,20 @@ class User extends Model
         return false;
     }
 
-    public function getRole($id)
+    public function role()
     {
-        $role = Roles::query()
-            ->select('name')
-            ->leftJoin('user-role', 'id', '=', 'user-role.role_id')
-            ->leftJoin('users', 'user-role.user_id', '=', 'users.id')
-            ->where('users.id', '=', $id)
-            ->value('name');
-        return $role;
-    }
-    
-    public function setRole($id, $role)
-    {
-        $roleId = Roles::query()
-            ->select('id')
-            ->where('name', '=', $role)
-            ->value('id');
-
-        DB::table('user-role')->insert(
-            ['user_id' => $id, 'role_id' => $roleId]
-        );
+        return $this->belongsTo('App\Model\Role');
     }
 
     protected function getDbUser($field = 'login')
     {
         $user = parent::getDbUnit($field);
-        $user->original['role'] = $this->getRole($user->original['id']);
+        if($user) {
+            $role = \App\Model\Role::find($user->role_id);
+            unset($user->original['role_id']);
+            $user->original['role'] = $role->name;
+        }
         return $user;
-    }
-
-    public function roles()
-    {
-        return $this->belongsToMany('App\Model\Roles');
     }
 
 }

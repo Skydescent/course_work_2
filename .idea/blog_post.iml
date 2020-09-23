@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$/../../blog_post">
-      <sourceFolder url="file://$USER_HOME$/PhpstormProjects/Blog/spec" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../blog_post/src" isTestSource="false" packagePrefix="App\" />
-      <sourceFolder url="file://$USER_HOME$/PhpstormProjects/Blog/tests" isTestSource="true" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/composer" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/doctrine/inflector" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/illuminate/container" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/illuminate/contracts" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/illuminate/database" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/illuminate/support" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/nesbot/carbon" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/psr/container" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/psr/simple-cache" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/symfony/polyfill-mbstring" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/symfony/polyfill-php80" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/symfony/translation" />
-      <excludeFolder url="file://$MODULE_DIR$/../../blog_post/vendor/symfony/translation-contracts" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="App\" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/inflector" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/container" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/database" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/support" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/nesbot/carbon" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/container" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/simple-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-mbstring" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php80" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/translation" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/translation-contracts" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
