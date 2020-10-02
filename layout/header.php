@@ -78,5 +78,6 @@
         </div>
         <?php \helpers\debug($_SESSION);?>
         <?php \helpers\debug($_REQUEST);?>
+        <?php \helpers\debug($_FILES);?>
 
 

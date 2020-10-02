@@ -1,17 +1,20 @@
 <?php
 
-
 namespace App\Controller;
 
-
 use App\Exception\NoRightsException;
-
 use App\Model\Subscribed;
+
 use function helpers\h;
 use function helpers\redirect;
 
 class UserController extends \App\Controller
 {
+    /**
+     * Получает и обрабатывает данные для отображения страницы авторизации пользователя.
+     *
+     * @return \App\View\View
+     */
     public function login()
     {
         if (!empty($_POST)) {
@@ -32,6 +35,11 @@ class UserController extends \App\Controller
         return $this->getView(__METHOD__);
     }
 
+    /**
+     * Получает и обрабатывает данные для отображения страницы регистрации пользователя.
+     *
+     * @return \App\View\View
+     */
     public function signup()
     {
         if (!empty($_POST)) {
@@ -65,12 +73,13 @@ class UserController extends \App\Controller
         return $this->getView(__METHOD__);
     }
 
+    /**
+     * Получает и обрабатывает данные для отображения страницы профиля пользователя.
+     *
+     * @return \App\View\View
+     */
     public function profile()
     {
-        if (!isset($_SESSION['auth_subsystem'])) {
-            throw new NoRightsException();
-        }
-
         if (!isset($_SESSION['error']) || empty($_SESSION['error'])) {
             $_SESSION['form_data'] = $_SESSION['auth_subsystem'];
         }
@@ -79,33 +88,35 @@ class UserController extends \App\Controller
             $user = new \App\Model\User;
             $data = h($_POST);
             $user->load($_SESSION['auth_subsystem']);
-            $updatedData = $user->checkAttrUpdates($data);
 
-            if (count($updatedData) !== 0 || $_FILES['img']['size'] !== 0) {
+            $updatedData = $user->checkAttrUpdates($data, ['login', 'email', 'about']);
+            if ($data['password'] !== '' || $data['password_new'] !=='') {
+                $updatedData['password'] = $data['password'];
+                $updatedData['password_new'] = $data['password_new'];
+                $isCorrectPassword = $user->isCorrectPassword($data['password']);
+            } else {
+                $isCorrectPassword = true;
+            }
+            $isFile = $_FILES['img']['size'] !== 0;
+
+            if (count($updatedData) !== 0 || $isFile) {
                 $oldLogin = $user->login;
-                $user->load($updatedData);
-                $checkUnique = [];
-                foreach (['login', 'email'] as $field) {
-                    if (key_exists($field, $updatedData)) {
-                        $checkUnique[] = $field;
-                    }
-                }
-                if (isset($updatedData['password']) || isset($updatedData['password_new'])) {
-                    $isCorrectPassword = $user->isCorrectPassword($updatedData['password']);
-                } else {
-                    $isCorrectPassword = true;
-                }
+                $oldEmail = $user->email;
+
+
+                $fieldsToCheck = array_intersect_key($updatedData, ['login', 'email']);
 
                 $file = $_FILES['img']['size'] !== 0 ? $user->uploadImg($_FILES['img'], 'img', $user->login) : null;
 
                 if (
                     !$user->validate($updatedData) ||
-                    !$user->checkUnique($checkUnique) ||
+                    !$user->checkUnique($fieldsToCheck) ||
                     $file === false ||
                     !$isCorrectPassword
                 ) {
                     $user->getErrors();
-                    $_SESSION['form_data'] = h($data);
+                    $_SESSION['form_data'] = $data;
+                    $_SESSION['form_data']['is_subscribed'] = $_SESSION['auth_subsystem']['is_subscribed'];
                     redirect();
                 }
 
@@ -119,10 +130,14 @@ class UserController extends \App\Controller
                         $user->deleteImg();
                     }
                     $updatedData['img'] = $file;
-                    $user->img = $file;
                 }
 
+                $user->load($updatedData);
                 $user->updateUserData($updatedData, $oldLogin);
+
+                if (isset($updatedData['email'])) {
+                    $user->updateSubscribe($oldEmail);
+                }
             }
 
             if (isset($data['is_subscribed'])) {
@@ -138,6 +153,9 @@ class UserController extends \App\Controller
         return $this->getView(__METHOD__);
     }
 
+    /**
+     * Получает и обрабатывает данные для выхода пользователя из ЛК.
+     */
     public function logout()
     {
         if(isset($_SESSION['auth_subsystem'])) {

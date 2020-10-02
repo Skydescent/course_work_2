@@ -1,19 +1,57 @@
 <?php
+
 namespace App;
+
+use function helpers\array_get;
 
 final class Config
 {
-	private static $instance; 
-	private $configs = [];
+    /**
+     * Единственный кземпляр класса
+     *
+     * @var
+     */
+    private static $instance;
 
-	private function __construct() {
-		$this->configs['db'] = require 'configs/db.php';
-		$this->configs['valid_err_msgs'] = require 'configs/valid_err_msgs.php';
-		$this->configs['file'] = require 'configs/file.php';
-        $this->configs['pagination'] = require 'configs/pagination.php';
+    /**
+     * Массив с настройками, подгружаемыми из файлов
+     *
+     * @var array
+     */
+    private $configs = [];
+
+    /**
+     * Config constructor.
+     */
+    private function __construct() {
+            $this->initialize();
 	}
 
-	public static function getInstance() : Config
+    /**
+     * Добавляет настройки в массив configs экземпляра класса
+     * из директории configs по именам файлов со значением подключённых файлов
+     */
+	private function initialize()
+    {
+        if ($handle = opendir(ROOT . DIRECTORY_SEPARATOR . CONFIGS_DIR)) {
+
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry !== '.' && $entry !== '..') {
+                    $name = rtrim ($entry, '.php');
+                    $this->configs[$name] = require CONFIGS_DIR . DIRECTORY_SEPARATOR . $entry;
+                }
+            }
+
+            closedir($handle);
+        }
+    }
+
+    /**
+     * Возвращает единственный экземпляр класса
+     *
+     * @return Config
+     */
+    public static function getInstance() : Config
 	{
 		if (null === static::$instance) {
 			static::$instance = new static();
@@ -22,9 +60,16 @@ final class Config
 		return static::$instance;
 	}
 
-	public function get($config, $default = null)
+    /**
+     * Возвращает значение настройки из массива configs
+     *
+     * @param $config
+     * @param null $default
+     * @return string|array|null
+     */
+    public function get($config, $default = null)
 	{
-		return \helpers\array_get($this->configs, $config, $default);
+		return array_get($this->configs, $config, $default);
 	}
 
 }

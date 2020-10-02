@@ -1,19 +1,33 @@
 <?php
+
 namespace App;
 
 use App\Helpers\Pagination;
 use App\View;
-use App\Model;
+
 use function helpers\h;
 use function helpers\redirect;
 
 abstract class Controller
 {
+    /**
+     * Возвращает имя шаблона для подключения
+     *
+     * @param $method
+     * @return mixed|string
+     */
     protected function getLayoutName($method)
     {
         return explode('::', $method)[1];
     }
 
+    /**
+     * Возвращает объект вида с переданными именем шаблона и данными для отображения
+     *
+     * @param null|string $method
+     * @param null|array $options
+     * @return View\View
+     */
     protected function getView($method =  NULL, $options = NULL)
     {
         $layout = is_null($method) ? DEFAULT_LAYOUT : $this->getLayoutName($method);
@@ -22,7 +36,12 @@ abstract class Controller
         $layout = $path . '.' . $layout;
         return new View\View($layout, $options);
     }
-    
+
+    /**
+     * Возвращает значение текущей страницы пагинации из GET параметров
+     *
+     * @return int
+     */
     protected function getCurrentPage()
     {
         if (isset($_GET['page'])) {
@@ -32,6 +51,14 @@ abstract class Controller
         }
     }
 
+    /**
+     * Возвращает объект пагинации
+     *
+     * @param $model
+     * @param $uri
+     * @param bool $isSelect
+     * @return Pagination
+     */
     protected function paginate($model, $uri, bool $isSelect = false)
     {
         $currentPage = $this->getCurrentPage();
@@ -46,6 +73,13 @@ abstract class Controller
         return $pagination;
     }
 
+    /**
+     * Обновляет запись в БД
+     *
+     * @param $name
+     * @param $model
+     * @param $field
+     */
     protected function update($name, $model, $field)
     {
         [$id, $newVal] = explode('_', h($_POST[$name]));

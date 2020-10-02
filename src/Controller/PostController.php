@@ -1,15 +1,24 @@
 <?php
 
-
 namespace App\Controller;
 
+use App\Controller;
+use App\Helpers\Sender;
 use App\Model;
+
+use App\View\View;
 use function helpers\h;
 use function helpers\redirect;
 
-class PostController extends \App\Controller
+class PostController extends Controller
 {
-    public  function post($id)
+    /**
+     * Получает и обрабатывает данные для отображения страницы со статьёй.
+     *
+     * @param string $id
+     * @return View
+     */
+    public  function post(string $id)
     {
         $post = Model\PostsList::whereId($id)->where('is_active', '<>', '0')->first();
         if (is_null($post)) {
@@ -48,11 +57,54 @@ class PostController extends \App\Controller
                 redirect();
             }
 
-
         }
 
-
         return $this->getView(__METHOD__, ['post'=> $post, 'comments' => $comments]);
+    }
+
+    /**
+     * Получает и обрабатывает данные для отображения формы добавления новой статьи.
+     *
+     * @return View
+     */
+    public function new()
+    {
+        if (!empty($_POST) && isset($_POST['add_post'])) {
+            $post = new Model\PostsList();
+            $data = h($_POST);
+
+            $file = $_FILES['img']['size'] !== 0 ? $post->uploadFile($_FILES['img'], 'img', 'img', $post->login) : null;
+
+            if (
+                !$post->validate($data) ||
+                $file === false
+            ) {
+                $post->getErrors();
+                $_SESSION['form_data'] = h($data);
+                redirect();
+            }
+
+            if ($file !== null) {
+                if ($post->img !== '') {
+                    $post->deleteImg();
+                }
+                $data['img'] = $file;
+            }
+            $data['user_id'] = $_SESSION['auth_subsystem']['id'];
+            $data['created_at'] = date("Y-m-d");
+            $data['is_active'] = 1;
+            $post->load($data);
+            $post->save();
+            $_SESSION['success'] = 'Статья успешно добавлена';
+
+            $sender = new Sender($post->title, $post->text, BASE_URL . "/post/$post->id");
+            $sender->send();
+
+            redirect('/');
+
+
+        }
+        return $this->getView(__METHOD__);
     }
 
 }

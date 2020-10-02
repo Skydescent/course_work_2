@@ -21,6 +21,19 @@
         </div>
     </div>
 <?php endforeach; ?>
+<?php if (isset($_SESSION['auth_subsystem'])) :?>
+    <div class="row mx-lg-5">
+        <div class="col py-3">
+            <div class="card" style="width: 60rem;">
+                <div class="card-body">
+                    <form action="/post/new" method="post">
+                        <button type="submit" name="new_post" value="" class="btn btn-outline-success btn-lg btn-block">ДОБАВИТЬ СТАТЬЮ</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif;?>
 
 <div class="row justify-content-md-center">
     <div class="text-center">
@@ -38,7 +51,7 @@
                 <div class="input-group-prepend">
                     <div class="input-group-text">@</div>
                 </div>
-                <input  name="email" type="text" class="form-control" placeholder="Email">
+                <input  name="email" type="text" class="form-control" placeholder="Email" value="<?= isset($_SESSION['form_data']['email']) ? helpers\h($_SESSION['form_data']['email']) : ''; ?>">
                 <?php if (isset($_SESSION['error']['email'])) : ?>
                     <div class="p-1 mt-2 alert alert-danger">
                         <?= $_SESSION['error']['email']; unset($_SESSION['error']['email']);?>

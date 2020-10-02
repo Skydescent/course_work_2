@@ -1,29 +1,46 @@
 <?php
 
-
 namespace App\Model;
-
-
-use Illuminate\Support\Facades\DB as DB;
-use function helpers\debug;
-use function helpers\redirect;
 
 class User extends Model
 {
+    /**
+     * Не использовать автоматически поле временного штампа для таблицы БД
+     *
+     * @var bool
+     */
     public $timestamps = false;
+
+    /**
+     * Название таблицы БД
+     *
+     * @var string
+     */
     protected $table = 'users';
 
+    /**
+     * Атрибуты модели(поля таблицы БД)
+     *
+     * @var array
+     */
     protected $attributes = [
         'id' => '',
         'login' => '',
         'password' => '',
         'email' => '',
         'role_id' => '',
+        'role' => '',
         'img' =>'',
         'about' => '',
-        'is_active' => ''
+        'is_active' => '',
+        'is_subscribed' => ''
     ];
 
+    /**
+     * Массив с правилами валидации
+     *
+     * @var array
+     */
     protected $rules = [
         'required' => [
             'login',
@@ -49,11 +66,22 @@ class User extends Model
 
     ];
 
+    /**
+     * Проверяет уникальность пользователя по полям переданным в массиве
+     *
+     * @param array $fieldNames
+     * @return bool
+     */
     public function checkUnique($fieldNames = ['login', 'email'])
     {
         return parent::checkUnique($fieldNames);
     }
 
+    /**
+     * Авторизация пользователя
+     *
+     * @return bool
+     */
     public function login()
     {
         $login = !empty(trim($_POST['login'])) ? trim($_POST['login']) : null;
@@ -80,16 +108,12 @@ class User extends Model
         return false;
     }
 
-    public function updateAttrs($data)
-    {
-        foreach ($data as $name => $value) {
-            if (isset($this->$name)) {
-                $this->$name = $value;
-            }
-        }
-        $this->save();
-    }
-
+    /**
+     * Проверяет правильность пароля
+     *
+     * @param $password
+     * @return bool
+     */
     public function isCorrectPassword($password)
     {
         $user = $this->getDbUser();
@@ -103,19 +127,38 @@ class User extends Model
         return false;
     }
 
+    /**
+     * Загружает изображение
+     *
+     * @param $file
+     * @param $fieldName
+     * @param $prefixName
+     * @return false|string|null
+     */
     public  function uploadImg($file, $fieldName, $prefixName)
     {
             return parent::uploadFile($file, $fieldName, 'img', $prefixName);
     }
 
+    /**
+     * Удаляет файл изображения, если он существует
+     */
     public function deleteImg()
     {
-        unlink(ROOT . $this->img);
+        if(file_exists($this->img)) {
+            unlink(ROOT . $this->img);
+        }
     }
 
+    /**
+     * Обновляет поля пользователя в БД и в сессии
+     *
+     * @param $data
+     * @param null $login
+     */
     public function updateUserData ($data, $login = null)
     {
-        if ($login === null) {
+        if (is_null($login)) {
             $login = $this->login;
         }
         $updateRows = self::query()
@@ -131,10 +174,17 @@ class User extends Model
         }
     }
 
+    /**
+     * Добавляет(подписывает)/удаляет(отписывает) email пользователя в таблицу БД subscribed
+     * в зависимости от того подписан он или отписан
+     * в случае успеха возвращает true, неудачи false
+     *
+     * @return bool
+     */
     public function toggleSubs()
     {
         $subs = new Subscribed();
-        $subs->load(['email' => $this->email]);
+        $subs->load(['email' => $this->email, 'is_active' => 1]);
         if ($subs->toggle()) {
             return true;
         }
@@ -142,10 +192,16 @@ class User extends Model
         return false;
     }
 
+    /**
+     * Добавляет(подписывает) email пользователя,
+     * в случае успеха возвращает true, неудачи false
+     *
+     * @return bool
+     */
     public function subscribe()
     {
         $subs = new Subscribed();
-        $subs->load(['email' => $this->email]);
+        $subs->load(['email' => $this->email, 'is_active' => 1]);
         if ($subs->subscribe()) {
             return true;
         }
@@ -153,16 +209,29 @@ class User extends Model
         return false;
     }
 
-    public function role()
+    /**
+     * Обновляет электронную почту в таблице БД subscribed
+     *
+     * @param $oldEmail
+     */
+    public function updateSubscribe($oldEmail)
     {
-        return $this->belongsTo('App\Model\Role');
+        $subs = new Subscribed();
+        $subs->load(['email' => $oldEmail]);
+        $subs->changeMail($this->email);
     }
 
+    /**
+     * Возвращает объект пользователя с данными из БД
+     *
+     * @param string $field
+     * @return false
+     */
     protected function getDbUser($field = 'login')
     {
         $user = parent::getDbUnit($field);
         if($user) {
-            $role = \App\Model\Role::find($user->role_id);
+            $role = Role::find($user->role_id);
             unset($user->original['role_id']);
             $user->original['role'] = $role->name;
         }

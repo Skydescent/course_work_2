@@ -1,15 +1,21 @@
 <?php
 
-
 namespace App\Controller;
 
+use App\Controller;
 use App\Model;
-use App\Helpers\Pagination;
+
+use App\View\View;
 use function helpers\h;
 use function helpers\redirect;
 
-class AdminController extends \App\Controller
+class AdminController extends Controller
 {
+    /**
+     * Получает и обрабатывает данные для отображения страницы пользователей.
+     *
+     * @return View
+     */
     public function users()
     {
         $model = '\App\Model\User';
@@ -47,6 +53,11 @@ class AdminController extends \App\Controller
         );
     }
 
+    /**
+     * Получает и обрабатывает данные для отображения страницы статей.
+     *
+     * @return View
+     */
     public function posts()
     {
         $model = '\App\Model\PostsList';
@@ -64,11 +75,19 @@ class AdminController extends \App\Controller
             ->get();
         $commentsCount = [];
         foreach ($comments as $comment) {
-            $commentsCount[$comment['post_id']] = Model\Comment::query()->where('post_id', '=', $comment['post_id'] )->count('post_id');
+            $commentsCount[$comment['post_id']] = Model\Comment::query()
+                ->where('post_id', '=', $comment['post_id'] )->count('post_id');
         }
         $posts = Model\PostsList::query()
             ->leftJoin('users', 'posts.user_id', '=', 'users.id')
-            ->select('posts.id','posts.created_at', 'posts.img', 'posts.title', 'users.login as author', 'posts.is_active')
+            ->select(
+                'posts.id',
+                'posts.created_at',
+                'posts.img',
+                'posts.title',
+                'users.login as author',
+                'posts.is_active'
+            )
             ->orderBy('posts.id', 'asc')
             ->skip($pagination->getStart())
             ->take($pagination->getPerPage())
@@ -86,6 +105,11 @@ class AdminController extends \App\Controller
 
     }
 
+    /**
+     * Получает и обрабатывает данные для отображения страницы подписок.
+     *
+     * @return View
+     */
     public function subscriptions()
     {
         $model = '\App\Model\Subscribed';
@@ -117,6 +141,11 @@ class AdminController extends \App\Controller
 
     }
 
+    /**
+     * Получает и обрабатывает данные для отображения страницы с комментариями.
+     *
+     * @return View
+     */
     public function comments()
     {
         $model = '\App\Model\Comment';
@@ -133,7 +162,15 @@ class AdminController extends \App\Controller
         $comments = Model\Comment::query()
             ->leftJoin('users', 'comments.author_id', '=', 'users.id')
             ->leftJoin('posts', 'comments.post_id', '=', 'posts.id')
-            ->select('comments.id','comments.created_at', 'comments.text', 'comments.is_applied','posts.title as post_title','posts.id as post_id', 'users.login as author')
+            ->select(
+                'comments.id',
+                'comments.created_at',
+                'comments.text',
+                'comments.is_applied',
+                'posts.title as post_title',
+                'posts.id as post_id',
+                'users.login as author'
+            )
             ->orderBy('comments.id', 'asc')
             ->skip($pagination->getStart())
             ->take($pagination->getPerPage())
@@ -148,7 +185,12 @@ class AdminController extends \App\Controller
             ]
         );
     }
-    
+
+    /**
+     * Получает и обрабатывает данные для отображения страницы со статическими страницами.
+     *
+     * @return View
+     */
     public function pages()
     {
         $model = '\App\Model\StaticPages';

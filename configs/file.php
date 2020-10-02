@@ -1,6 +1,6 @@
 <?php
 return [
-    'fileTypes' => [
+    'fileType' => [
         'img' => [
             'image/jpeg',
             'image/png',

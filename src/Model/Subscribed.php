@@ -1,17 +1,41 @@
 <?php
 
-
 namespace App\Model;
 
+use Illuminate\Database\Eloquent\Collection;
 
 class Subscribed extends Model
 {
+    /**
+     * Не использовать автоматически поле временного штампа для таблицы БД
+     *
+     * @var bool
+     */
     public $timestamps = false;
+
+    /**
+     * Атрибуты модели(поля таблицы БД)
+     *
+     * @var array
+     */
     protected $attributes = [
-        'email' => ''
+        'email' => '',
+        'is_active' => ''
     ];
+
+    /**
+     * Название таблицы БД
+     *
+     * @var string
+     */
     protected $table = 'subscribed';
 
+    /**
+     * Добавляет email в таблицу БД subscribed
+     * возвращает в случае успеха true, в случае неудачи false
+     *
+     * @return bool
+     */
     public function subscribe()
     {
         if (!$this->checkUnique(['email'])) {
@@ -26,6 +50,12 @@ class Subscribed extends Model
         return true;
     }
 
+    /**
+     * Удаляет email в таблицу БД subscribed
+     * возвращает в случае успеха true, в случае неудачи false
+     *
+     * @return bool
+     */
     public function unsubscribe()
     {
         $deletedRows = self::query()
@@ -39,6 +69,13 @@ class Subscribed extends Model
         return true;
     }
 
+    /**
+     * Добавляет(подписывает)/удаляет(отписывает) email в таблицу БД subscribed
+     * в зависимости от того подписан он или отписан
+     * в случае успеха возвращает true, неудачи false
+     *
+     * @return bool
+     */
     public function toggle()
     {
         if ($this->isSubscribed()) {
@@ -49,27 +86,43 @@ class Subscribed extends Model
         return $result;
     }
 
+    /**
+     * Изменяет email в таблице БД на новый
+     *
+     * @param $newEmail
+     * @return bool
+     */
     public function changeMail($newEmail)
     {
         $updateRows = self::query()
-            ->where('login', $this->email)
+            ->where('email', '=', $this->email)
             ->update(['email' => $newEmail]);
         if ($updateRows === 0) {
-            $_SESSION['error']['page'] = 'Ошибка обновления, попробуйте позже';
+            $_SESSION['error']['page'] = 'Ошибка обновления почты в подписке, попробуйте позже';
             return false;
         }
         return true;
     }
 
+    /**
+     * Возвращает коллекцию всех подписанных
+     *
+     * @return Subscribed[]|Collection
+     */
     public function getAll()
     {
         return self::all();
     }
 
+    /**
+     * Добавляет в сессию пользователя подписан он или нет
+     *
+     * @param $email
+     */
     public static function addInfo($email)
     {
         $sub = new self;
-        $sub->load($email);
+        $sub->load(['email' => $email]);
         if ($sub->isSubscribed()) {
             $_SESSION['auth_subsystem']['is_subscribed'] = 'yes';
         } else {
@@ -77,6 +130,11 @@ class Subscribed extends Model
         }
     }
 
+    /**
+     * Возвращает true если email подписан, если нет false
+     *
+     * @return bool
+     */
     protected function isSubscribed()
     {
         return parent::getDbUnit('email') !== false;

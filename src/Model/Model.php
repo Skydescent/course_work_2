@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Model;
-
 
 use App\Helpers;
 use App\Validators;
@@ -11,10 +9,34 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
 {
     use Helpers\SaveErrors;
 
+    /**
+     * Имя таблицы в БД
+     *
+     * @var string
+     */
     protected $table;
+
+    /**
+     * Атрибуты модели(поля таблицы БД)
+     *
+     * @var array
+     */
     protected $attributes = [];
+
+    /**
+     * Массив с правилами валидации
+     *
+     * @var array
+     */
     protected $rules = [];
 
+
+    /**
+     * Перегружает свойства, для возможности использования методов Eloquent/Model
+     *
+     * @param $name
+     * @return false|mixed
+     */
     public function __get($name)
     {
         if (array_key_exists($name, $this->attributes)) {
@@ -23,6 +45,12 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         return false;
     }
 
+    /**
+     * Загружает атрибуты в модель
+     *
+     * @param array|string $data
+     * @return Model|void
+     */
     public function load($data)
     {
         foreach ($this->attributes as $name => $value)
@@ -33,6 +61,13 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         }
     }
 
+    /**
+     * Валидирует атрибуты согласно правилам модели
+     *
+     * @param null $data опционально можно валидировать передаваемые данные
+     * @param null $ruleKeys опционально можно загружать другие правила
+     * @return bool
+     */
     public function validate($data = null, $ruleKeys = null)
     {
         $data = $data ?? $this->getAttributes();
@@ -50,6 +85,13 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         return false;
     }
 
+    /**
+     * Проверка отмечено ли поле
+     *
+     * @param $data
+     * @param $filedName
+     * @return bool
+     */
     public function isChecked($data, $filedName)
     {
         $errMsg = 'Вы не отметили данное поле!';
@@ -60,39 +102,47 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         return true;
     }
 
+    /**
+     * Возвращает атрибуты модели
+     *
+     * @return array
+     */
     public function getAttributes()
     {
         return $this->attributes;
     }
 
-    public function checkAttrUpdates($data)
+    /**
+     * Проверяет какие атрибуты изменились
+     *
+     * @param array $data изменённые атрибуты
+     * @param array $fields имена атрибутов по которым происходит проверка
+     * @return array
+     */
+    public function checkAttrUpdates(array $data, array $fields)
     {
         $newData = [];
         foreach ($data as $name => $value) {
-            if (
-                $name == 'is_subscribed' ||
-                $name == 'id' ||
-                $name == 'img' ||
-                ($name == 'password' || $name == 'password_new') &&
-                $data[$name] === ''
-            ) {
-                continue;
-            }
-
-            if (isset($this->attributes[$name]) && $this->attributes[$name] !== $value) {
-                $newData[$name] = $data[$name];
-            }
-            if (!isset($this->attributes[$name])) {
-                $newData[$name] = $data[$name];
+            if (in_array($name, $fields) && $this->getAttributes()[$name] !== $value) {
+                $newData[$name] = $value;
             }
 
         }
         return $newData;
     }
 
-    public function uploadFile($file, $fieldName, $fileTypes, $prefixName)
+    /**
+     * Загружает файл и возвращает путь к файлу
+     *
+     * @param $file
+     * @param $fieldName
+     * @param $fileType
+     * @param $prefixName
+     * @return false|string|null
+     */
+    public function uploadFile($file, $fieldName, $fileType, $prefixName)
     {
-        $uploader = new Helpers\Uploader($file, $fieldName, $fileTypes, $prefixName);
+        $uploader = new Helpers\Uploader($file, $fieldName, $fileType, $prefixName);
         if ($uploader->upload()) {
             return $uploader->getUploadedFilePath();
         }
@@ -100,6 +150,12 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         return false;
     }
 
+    /**
+     * Проверяет уникальность записи(модлели) в таблице БД
+     *
+     * @param $fieldNames
+     * @return bool
+     */
     public function checkUnique($fieldNames)
     {
         $isUnique = true;
@@ -116,6 +172,12 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         return $isUnique;
     }
 
+    /**
+     * Получает объект модели по названию атрибута
+     *
+     * @param $field
+     * @return false
+     */
     protected function getDbUnit($field)
     {
         $unit = self::whereRaw(

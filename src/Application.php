@@ -1,18 +1,32 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Application
 {
+    /**
+     * Объект маршрутизатора
+     *
+     * @var Router
+     */
     private $router;
 
+    /**
+     * Application constructor.
+     *
+     * @param Router $router
+     */
     public function __construct(Router $router)
     {
         $this->router = $router;
         $this->initialize();
     }
 
+    /**
+     * Инициализация соединения с БД из Config
+     */
     private function initialize()
     {
         session_start();
@@ -33,6 +47,10 @@ class Application
         $capsule->bootEloquent();
     }
 
+    /**
+     * Запускает поиск маршрута и отображение шаблона
+     * отлавливает возникающие исключения
+     */
     public function run()
     {
         try {
@@ -49,6 +67,11 @@ class Application
 
     }
 
+    /**
+     * Отображает ошибку
+     *
+     * @param $e
+     */
     public function renderException($e)
     {
         if ($e instanceof View\Renderable) {

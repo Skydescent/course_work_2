@@ -2,19 +2,37 @@
 
 namespace App\Validators;
 
+use App\Helpers\SaveErrors;
 
 class Validator
 {
-    use \App\Helpers\SaveErrors;
+    use SaveErrors;
 
-    private $data = [];
+    /**
+     * Массив с данными для валидации
+     *
+     * @var array
+     */
+    private $data;
+
+    /**
+     * Массив с правилами валидации
+     *
+     * @var array
+     */
     private $rules = [];
+
+    /**
+     * Массив с именами полей, которые не нужно валидириовать
+     *
+     * @var array
+     */
     private $rulesKeys = [];
 
     /**
      * Validator constructor.
+     *
      * @param array $data
-     * @param array $rules
      */
     public function __construct(array $data)
     {
@@ -22,9 +40,15 @@ class Validator
         $this->initErrorsMsgs('valid_err_msgs');
     }
 
+    /**
+     * Валидирует данные из $data
+     * в случае успеха возвращает true, неудачи false
+     *
+     * @return bool
+     */
     public function validate()
     {
-        $this->sanitizeSpecialChars($this->data);
+        $this->sanitizeSpecialChars();
         foreach ($this->rules as $method => $fieldRules) {
             foreach ($this->data as $fieldName => $value) {
                 if (method_exists($this, $method)) {
@@ -41,16 +65,29 @@ class Validator
         return true;
     }
 
+    /**
+     * Загружает правила валидации из переданного параметра $data
+     *
+     * @param $data
+     */
     public function rules($data)
     {
         $this->rules = $data;
     }
 
+    /**
+     * Загружает массив с именами полей, которые не нужно валидировать
+     *
+     * @param $data
+     */
     public function ruleKeys($data)
     {
         $this->rulesKeys = $data;
     }
 
+    /**
+     * Экранирует HTML-символы
+     */
     protected function sanitizeSpecialChars()
     {
         $meth = 'sanitizeSpecialChars';
@@ -61,6 +98,12 @@ class Validator
         }
     }
 
+    /**
+     * Проверяет заполненео ли поле
+     *
+     * @param $fieldName
+     * @param $value
+     */
     protected function required($fieldName, $value)
     {
         $meth = 'required';
@@ -69,6 +112,12 @@ class Validator
         }
     }
 
+    /**
+     * Фильтрует значение переданным фильтром
+     *
+     * @param $fieldName
+     * @param $value
+     */
     protected function filters ($fieldName, $value)
     {
         $meth = 'filters';
@@ -80,6 +129,12 @@ class Validator
         }
     }
 
+    /**
+     * Проверяет минимальное количество символов в значении поля
+     *
+     * @param $fieldName
+     * @param $value
+     */
     protected function minLength($fieldName, $value)
     {
         $meth = 'minLength';
@@ -90,6 +145,12 @@ class Validator
         }
     }
 
+    /**
+     * Проверяет является ли переданное значение словом
+     *
+     * @param $fieldName
+     * @param $value
+     */
     protected function isWord($fieldName, $value)
     {
         $meth = 'isWord';
@@ -98,6 +159,12 @@ class Validator
         }
     }
 
+    /**
+     * Проверяет равны ли значения полей
+     *
+     * @param $fieldName
+     * @param $value
+     */
     protected function equalFields($fieldName, $value)
     {
         $meth = 'equalFields';

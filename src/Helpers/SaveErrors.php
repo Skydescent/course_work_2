@@ -1,37 +1,40 @@
 <?php
 
-
 namespace App\Helpers;
 
+use App\Config;
 
 trait SaveErrors
 {
     /**
-     * в свойство загружается массив
-     * с сообщениями об ошибках, инициализуется из Config
+     * в свойство загружается массив с сообщениями об ошибках по типам ошибок
+     * может инициализироваться из Config
+     *
      * @var
      */
     protected $errorMsgs = [];
 
     /**
-     * в свойство загружается массив
-     * с сообщениями об ошибках, инициализуется из Config
+     * в свойство загружается массив с найденными ошибками, которые потом будут отображаться
+     *
      * @var
      */
     protected $errors = [];
 
     /**
-     * Метод загрузки массива с сообщениями об ошибках из Config
-     * @param $config
+     * Загрузка массива с сообщениями об ошибках из Config
+     *
+     * @param $conf
      */
     protected function initErrorsMsgs($conf)
     {
-        $config = \App\Config::getInstance();
+        $config = Config::getInstance();
         $this->errorMsgs = $config->get($conf);
     }
 
     /**
-     * Функция возвращает сообщения об ошибках
+     * Возвращает сообщения об ошибках
+     *
      * @return mixed
      */
     public function getErrorsMsgs()
@@ -40,12 +43,13 @@ trait SaveErrors
     }
 
     /**
-     * Функция сохранения сообщения об ошибке в массиве ошибок
-     * @param $cat категория сообщений об ошибках
+     * Сохраняет сообщения об ошибке в массиве ошибок по категориям для отображения ошибок при валидации
+     *
+     * @param string $cat категория сообщений об ошибках
      * @param string $fieldName имя поля формы под которым нужно будет вывести ошибку
      * @param array $args в случае, если сообщение об ошибке это шаблон, то можно передать доп аргументы
      */
-    protected function addErrorMsgByCat($cat, $fieldName = '', $args = [])
+    protected function addErrorMsgByCat(string $cat, $fieldName = '', $args = [])
     {
         if ($fieldName !== '') {
             if (count($args) > 0) {
@@ -59,6 +63,11 @@ trait SaveErrors
         }
     }
 
+    /**
+     * Добавляет массив с ошибками к массиву ошибок данного объекта
+     *
+     * @param array $errors
+     */
     protected function addErrors(array $errors)
     {
         foreach ($errors as $fieldName => $errMsgs) {
@@ -70,6 +79,9 @@ trait SaveErrors
         }
     }
 
+    /**
+     * Добавляет HTML всех ошибок в сессию
+     */
     public function getErrors()
     {
 
@@ -82,6 +94,11 @@ trait SaveErrors
         }
     }
 
+    /**
+     * Возвращает массив с ошибками
+     *
+     * @return array|false
+     */
     public function errors()
     {
         if(count($this->errors) !== 0) {

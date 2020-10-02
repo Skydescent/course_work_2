@@ -1,39 +1,98 @@
 <?php
 
-
 namespace App\Helpers;
 
+use App\Config;
 
 class Uploader
 {
 
     use SaveErrors;
 
-    protected $fileTypes = [];
+    /**
+     * Тип загружаемого файла
+     *
+     * @var array
+     */
+    protected $fileType;
+
+    /**
+     * Максимальный размер файла
+     *
+     * @var
+     */
     protected $maxFileSize;
+
+    /**
+     * Сам файл
+     *
+     * @var
+     */
     protected $file;
+
+    /**
+     * Префикс для имени файла
+     *
+     * @var string
+     */
     protected $prefixName;
+
+    /**
+     * Путь для загрузки файла в директорию
+     *
+     * @var
+     */
     protected $uploadPath;
+
+    /**
+     * Полный путь к файлу с именем файла, возвращаемый после загрузки
+     *
+     * @var null|string
+     */
     protected $filePath = null;
+
+    /**
+     * Имя поля загрузки файла для последующего отображения ошибок
+     *
+     * @var
+     */
     protected $fieldName;
 
-    public function __construct($file, $fieldName, $fileTypes, $prefixName)
+    /**
+     * Uploader constructor.
+     *
+     * @param $file
+     * @param $fieldName
+     * @param $fileType
+     * @param $prefixName
+     */
+    public function __construct($file, $fieldName, $fileType, $prefixName)
     {
         $this->prefixName = is_null($prefixName) ? '' : $prefixName . '_';
         $this->file = $file;
         $this->fieldName = $fieldName;
-        $this->initialize($fileTypes);
+        $this->initialize($fileType);
     }
 
-    public function initialize($fileTypes)
+    /**
+     * Инициализирует тип файла, путь для загрузки и максимальный размер из Config
+     *
+     * @param $fileType
+     */
+    public function initialize($fileType)
     {
-        $config = \App\Config::getInstance();
-        $this->fileTypes = $config->get('file.fileTypes.' . $fileTypes);
-        $this->uploadPath = $config->get('file.filePath.' . $fileTypes);
+        $config = Config::getInstance();
+        $this->fileType = $config->get('file.fileType.' . $fileType);
+        $this->uploadPath = $config->get('file.filePath.' . $fileType);
         $this->maxFileSize = $config->get('file.maxSize');
     }
 
 
+    /**
+     * Проверяет ошибки файла, максимальный рзамер, тип файла и загружает
+     *
+     * @return bool
+     */
     public function upload()
     {
         if ( $this->checkFileErrors() &&
@@ -46,11 +105,21 @@ class Uploader
         return false;
     }
 
+    /**
+     * Удаляет файл
+     *
+     * @param $file
+     */
     public function delete($file)
     {
         unlink($file);
     }
 
+    /**
+     * Загружает файл и возвращает true в случае успеха, false в случае неудачи
+     *
+     * @return bool
+     */
     protected function checkUpload()
     {
         $filePath = $this->uploadPath . $this->prefixName . $this->file['name'];
@@ -67,14 +136,24 @@ class Uploader
         return false;
     }
 
+    /**
+     * Возвращает полный путь к загруженному файлу
+     *
+     * @return null
+     */
     public function getUploadedFilePath()
     {
         return $this->filePath;
     }
 
+    /**
+     * Проверяет тип файла
+     *
+     * @return bool
+     */
     protected function checkFileType()
     {
-        if (array_search(mime_content_type($this->file['tmp_name']), $this->fileTypes) === false) {
+        if (array_search(mime_content_type($this->file['tmp_name']), $this->fileType) === false) {
             $this->addErrors(
                 [$this->fieldName => ['Файл не соответствует необходимому типу']]
             );
@@ -83,6 +162,11 @@ class Uploader
         return true;
     }
 
+    /**
+     * Проверяет ошибки файла
+     *
+     * @return bool
+     */
     protected function checkFileErrors()
     {
         if ($this->file['error'] !== 0) {
@@ -92,6 +176,11 @@ class Uploader
         return true;
     }
 
+    /**
+     * Проверяет размер файла
+     *
+     * @return bool
+     */
     protected function checkFileSize()
     {
         if ($this->file['size'] > $this->maxFileSize) {

@@ -1,8 +1,6 @@
 <?php
 
-use App\View;
 use App\Router;
-use App\Model;
 use App\Application;
 use App\Controller;
 
@@ -16,7 +14,7 @@ require_once 'bootstrap.php';
 
 $router = new Router();
 
-
+$router->request('/post/new', Controller\PostController::class . '@new');
 $router->request('/post/*', Controller\PostController::class . '@post');
 $router->request('/', Controller\MainController::class . '@index');
 $router->request('/*/*');
