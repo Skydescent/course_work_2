@@ -75,7 +75,7 @@ class Router
                 return $route->run($uri);
             }
         }
-        throw new Exception\NotFoundException();
+        throw new Exception\NotFoundException('маршрут не найден');
     }
 
     /**

@@ -39,7 +39,7 @@ class PostsList extends Model
     protected $rules = [
         'required' => [
             'title',
-            'text',
+            'text'
         ],
 
         'minLength' => [

@@ -30,4 +30,24 @@ class StaticPages extends Model
         'text' => '',
         'is_active' => '',
     ];
+
+    /**
+     * Массив с правилами валидации
+     *
+     * @var array
+     */
+    protected $rules = [
+        'required' => [
+            'title',
+            'text',
+            'alias',
+        ],
+
+        'minLength' => [
+            'title' => 10,
+            'text' => 100,
+            'alias' => 3
+        ],
+
+    ];
 }

@@ -4,8 +4,9 @@ namespace App\Controller;
 
 use App\Exception\NoRightsException;
 use App\Model\Subscribed;
+use App\Model\User;
 
-use function helpers\h;
+use function helpers\htmlSecure;
 use function helpers\redirect;
 
 class UserController extends \App\Controller
@@ -18,8 +19,8 @@ class UserController extends \App\Controller
     public function login()
     {
         if (!empty($_POST)) {
-            $user = new \App\Model\User();
-            $data = h($_POST);
+            $user = new User();
+            $data =htmlSecure($_POST);
 
             $user->load($data);
 
@@ -43,25 +44,30 @@ class UserController extends \App\Controller
     public function signup()
     {
         if (!empty($_POST)) {
-            $user = new \App\Model\User();
-            $data = h($_POST);
+            $user = new User();
+            $data =htmlSecure($_POST);
             $user->load($data);
             if (
                 !$user->validate($data) ||
                 !$user->checkUnique() ||
                 !$user->isChecked($data, 'is_apply_rules')
             ) {
+                $_SESSION['form_data'] = $data;
                 $user->getErrors();
                 redirect();
             }
             $user->password = password_hash($user->password, PASSWORD_DEFAULT);
             unset($user->id);
+            unset($user->role);
+            unset($user->is_subscribed);
+            $user->is_active = 1;
             $user->role_id = 3;
 
             if ($user->save()) {
                 $_SESSION['success'] = 'Вы успешно зарегистрированы';
                 $user->password = '';
                 $_SESSION['auth_subsystem'] = $user->getAttributes();
+                $_SESSION['auth_subsystem']['role'] = 'registered';
                 Subscribed::addInfo($user->email);
 
                 redirect('/');
@@ -85,12 +91,14 @@ class UserController extends \App\Controller
         }
 
         if (!empty($_POST)) {
-            $user = new \App\Model\User;
-            $data = h($_POST);
+            $user = new User();
+            $data =htmlSecure($_POST);
             $user->load($_SESSION['auth_subsystem']);
 
             $updatedData = $user->checkAttrUpdates($data, ['login', 'email', 'about']);
-            if ($data['password'] !== '' || $data['password_new'] !=='') {
+            if ((isset($data['password']) && $data['password'] !== '') ||
+                (isset($data['password_new']) && $data['password_new'] !== '')
+            ) {
                 $updatedData['password'] = $data['password'];
                 $updatedData['password_new'] = $data['password_new'];
                 $isCorrectPassword = $user->isCorrectPassword($data['password']);
@@ -103,8 +111,9 @@ class UserController extends \App\Controller
                 $oldLogin = $user->login;
                 $oldEmail = $user->email;
 
-
-                $fieldsToCheck = array_intersect_key($updatedData, ['login', 'email']);
+                $attrToCheckUnique = array_intersect_key($updatedData, ['login'=>'', 'email'=>'']);
+                $fieldsToCheck = array_keys($attrToCheckUnique);
+                $user->load($attrToCheckUnique);
 
                 $file = $_FILES['img']['size'] !== 0 ? $user->uploadImg($_FILES['img'], 'img', $user->login) : null;
 
@@ -143,7 +152,7 @@ class UserController extends \App\Controller
             if (isset($data['is_subscribed'])) {
                 if (!$user->toggleSubs()) {
                     $user->getErrors();
-                    $_SESSION['form_data'] = h($data);
+                    $_SESSION['form_data'] =htmlSecure($data);
                 } else {
                     $_SESSION['auth_subsystem']['is_subscribed'] = $_SESSION['auth_subsystem']['is_subscribed'] == 'no' ? 'yes' : 'no';
                 }

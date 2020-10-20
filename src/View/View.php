@@ -44,7 +44,7 @@ class View implements Renderable
     {
         $pathTolayout = VIEW_DIR . implode('/',explode('.', $this->layout)) . '.php';
         if (!is_file($pathTolayout)) {
-            throw new NotFoundException();
+            throw new NotFoundException('файл шаблона не найден');
         }
         $header = VIEW_DIR . 'header.php';
         $footer = VIEW_DIR . 'footer.php';

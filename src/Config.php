@@ -2,7 +2,9 @@
 
 namespace App;
 
-use function helpers\array_get;
+use App\Model\Setting;
+use function helpers\createArrayTree;
+use function helpers\arrayGet;
 
 final class Config
 {
@@ -41,7 +43,6 @@ final class Config
                     $this->configs[$name] = require CONFIGS_DIR . DIRECTORY_SEPARATOR . $entry;
                 }
             }
-
             closedir($handle);
         }
     }
@@ -69,7 +70,22 @@ final class Config
      */
     public function get($config, $default = null)
 	{
-		return array_get($this->configs, $config, $default);
+	    if (($config == 'file.maxSize.default' ||
+            $config == 'pagination.selects.default') &&
+            (isset($_SESSION['auth_subsystem']) && (
+                $_SESSION['auth_subsystem']['role'] !== 'admin' &&
+                $_SESSION['auth_subsystem']['role'] !== 'manager'
+                )
+            )
+        ) {
+            $settings = Setting::all();
+            if (!is_null($settings)) {
+                $settings = $settings->toArray();
+                $settings = createArrayTree($settings);
+                return arrayGet($settings, $config, $default);
+            }
+        }
+		return arrayGet($this->configs, $config, $default);
 	}
 
 }

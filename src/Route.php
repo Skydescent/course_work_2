@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Exception\NoRightsException;
+use App\Model\PostsList;
 
 class Route
 {
@@ -160,6 +161,9 @@ class Route
      */
     public function run($uri)
     {
+        if ($this->checkRoleAccess($uri) == false) {
+            throw new Exception\NoRightsException();
+        }
         preg_match($this->getPattern(), $uri, $matches);
         array_shift($matches);
 
@@ -167,15 +171,22 @@ class Route
             if (is_null($this->getCallback())) {
                 $class = 'App\Controller\\' . $this->upperCamelCase($matches[0]) . 'Controller';
                 $method = $matches[1];
-                $_SESSION['debug'] = $this->checkRoleAccess($uri);
-                if (!class_exists($class) ||
+
+                if (($isNotClass = !class_exists($class)) ||
                     (!method_exists(new $class, $method) && !method_exists(new $class, '__call'))
                 ) {
-                    throw new Exception\NotFoundException();
+
+                    $errorMessage = '';
+                    if ($isNotClass) {
+                        $errorMessage .= 'класс не существует ';
+                    } else {
+                        if (!method_exists(new $class, $method)) $errorMessage .= 'метод не существует ';
+                        if (!method_exists(new $class, '__call')) $errorMessage .= 'метод __call не существует ';
+                    }
+
+                    throw new Exception\NotFoundException($errorMessage);
                 }
-                if ($this->checkRoleAccess($uri) === false) {
-                    throw new Exception\NoRightsException();
-                }
+
                 return call_user_func_array([new $class, $method], array_values(array_slice($matches, 2)));
             }
             return call_user_func_array($this->getCallback(), array_values($matches));
@@ -215,8 +226,8 @@ class Route
         if ($access === 'all') return true;
 
         if (array_key_exists('no_access',$access)) {
-            foreach ($access['no_access'] as $value) {
-                if (stripos($uri, $value) !== false) {
+            foreach ($access['no_access'] as $routePart) {
+                if (stripos($uri, $routePart) !== false) {
                     return false;
                 }
             }

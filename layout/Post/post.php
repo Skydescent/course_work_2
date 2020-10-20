@@ -10,11 +10,20 @@
     </div>
     <div class="row mx-lg-5">
         <div class="col py-3">
-            <div class="container-sm">
-                <img src="<?= $post->img; ?>" class="card-text" alt="<?= $post->title; ?>" height="400">
-            </div>
+            <?php if($post->img !== '') :?>
+                <div class="container-sm">
+                    <img src="<?= $post->img; ?>" class="card-text" alt="<?= $post->title; ?>" height="400">
+                </div>
+            <?php endif;?>
             <p class="card-text"><small class="text-muted"><?= \helpers\mainPostDateFormat($post->created_at); ?></small></p>
             <p><?= $post->text; ?></p>
+            <?php if (isset($_SESSION['auth_subsystem']) && (
+                    $_SESSION['auth_subsystem']['id'] == $post['user_id'] ||
+                    $_SESSION['auth_subsystem']['role'] == 'admin' ||
+                    $_SESSION['auth_subsystem']['role'] == 'manager')
+            ) : ?>
+                <a href="/post/edit/<?= $post->id; ?>" class="btn btn-link stretched-link">Редактировать -></a>
+            <?php endif;?>
         </div>
     </div>
     <?php foreach ($comments as $comment) : ?>
@@ -27,10 +36,12 @@
         ) : ?>
             <div class="card bg-light mx-lg-5">
                 <div class="row no-gutters">
-                    <div class="col-2 py-3">
-                        <img src="<?=$comment['img']?>" class="card-img" alt="...">
-                        <p class="card-text text-center" "><?= $comment['login']; ?></p>
-                    </div>
+                    <?php if($comment['img'] !== ''):?>
+                        <div class="col-2 py-3">
+                            <img src="<?=$comment['img']?>" class="card-img" alt="...">
+                            <p class="card-text text-center" "><?= $comment['login']; ?></p>
+                        </div>
+                    <?php endif;?>
                     <div class="col-10">
                         <div class="card-body">
                             <p class="card-text"><?= $comment->text; ?></p>

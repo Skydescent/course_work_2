@@ -141,16 +141,6 @@ class User extends Model
     }
 
     /**
-     * Удаляет файл изображения, если он существует
-     */
-    public function deleteImg()
-    {
-        if(file_exists($this->img)) {
-            unlink(ROOT . $this->img);
-        }
-    }
-
-    /**
      * Обновляет поля пользователя в БД и в сессии
      *
      * @param $data

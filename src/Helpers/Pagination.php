@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 use App\Config;
 
-use function helpers\h;
+use function helpers\htmlSecure;
 
 class Pagination
 {
@@ -266,7 +266,7 @@ class Pagination
     protected function setPerPage()
     {
         if (isset($_GET['sel_pagination'])) {
-            return  (int) h($_GET['sel_pagination']);
+            return  (int)htmlSecure($_GET['sel_pagination']);
         } else {
             return false;
         }

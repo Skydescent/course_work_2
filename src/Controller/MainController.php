@@ -7,7 +7,7 @@ use App\Helpers\Sender;
 use App\Model;
 use App\View\View;
 
-use function helpers\h;
+use function helpers\htmlSecure;
 use function helpers\redirect;
 
 class MainController extends Controller
@@ -35,13 +35,13 @@ class MainController extends Controller
             ->get();
 
         if (!empty($_POST)) {
-            $data = h($_POST);
+            $data =htmlSecure($_POST);
 
             if (isset($_SESSION['auth_subsystem'])) {
                 $email = $_SESSION['auth_subsystem']['email'];
             }
 
-            if (isset($data['email']) && $data['email'] != '') {
+            if (isset($data['email'])) {
                 $email = $data['email'];
             }
 
@@ -76,7 +76,7 @@ class MainController extends Controller
 
                 $email = Sender::decryptEmail(h($_GET['email']));
 
-                $isUnsubscribe = h($_GET['unsubscribe']) == 'yes';
+                $isUnsubscribe =htmlSecure($_GET['unsubscribe']) == 'yes';
                 if (!is_null($email) && $isUnsubscribe) {
                     $user = new Model\User();
                     $user->load(['email'=> $email]);

@@ -12,20 +12,18 @@ class StaticController extends Controller
     /**
      * Получает данные из БД и отображет их в случае нахождения запрашиваемого URL.
      *
-     * @param $name
-     * @param $arguments
+     * @param $alias
      * @return View
      * @throws NotFoundException
      */
-    public function __call($name, $arguments) {
-        $pages = Model\StaticPages::query()
-            ->select('*')
+    public function page(string $alias)
+    {
+        $page = Model\StaticPages::query()
             ->where('is_active', '=', '1')
-            ->get();
-        foreach ($pages as $page) {
-            if ($page->alias == $name) {
-                return $this->getView('App\Controller\StaticController::static', ['page' => $page]);
-            }
+            ->where('alias', '=', $alias)
+            ->first();
+        if (!is_null($page)) {
+            return $this->getView(__METHOD__, ['page' => $page]);
         }
         throw new NotFoundException();
     }

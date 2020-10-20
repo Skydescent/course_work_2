@@ -5,7 +5,7 @@ namespace App;
 use App\Helpers\Pagination;
 use App\View;
 
-use function helpers\h;
+use function helpers\htmlSecure;
 use function helpers\redirect;
 
 abstract class Controller
@@ -45,7 +45,7 @@ abstract class Controller
     protected function getCurrentPage()
     {
         if (isset($_GET['page'])) {
-            return  (int) h($_GET['page']);
+            return  (int)htmlSecure($_GET['page']);
         } else {
             return 1;
         }
@@ -77,16 +77,21 @@ abstract class Controller
      * Обновляет запись в БД
      *
      * @param $name
-     * @param $model
+     * @param $modelClass
      * @param $field
      */
-    protected function update($name, $model, $field)
+    protected function update($name, $modelClass, $field)
     {
-        [$id, $newVal] = explode('_', h($_POST[$name]));
-        $method = $model . '::find';
+        [$id, $newVal] = explode('_',htmlSecure($_POST[$name]));
+        $method = $modelClass . '::find';
         $user = $method($id);
         $user[$field] = $newVal;
         $user->save();
         redirect();
+    }
+
+    protected function getFile($model)
+    {
+        return $_FILES['img']['size'] !== 0 ? $model->uploadFile($_FILES['img'], 'img', 'img', 'post'.date('h_i_s')) : null;
     }
 }

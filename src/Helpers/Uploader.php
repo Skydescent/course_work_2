@@ -84,7 +84,7 @@ class Uploader
         $config = Config::getInstance();
         $this->fileType = $config->get('file.fileType.' . $fileType);
         $this->uploadPath = $config->get('file.filePath.' . $fileType);
-        $this->maxFileSize = $config->get('file.maxSize');
+        $this->maxFileSize = $config->get('file.maxSize.default');
     }
 
 

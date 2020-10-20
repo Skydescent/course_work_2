@@ -21,9 +21,11 @@
             <th scope="row"><?= $post->id; ?></th>
             <td><?= $post->created_at; ?></td>
             <td>
-                <div class="container-sm">
-                    <img src="<?= $post->img; ?>" class="card-text" height="100">
-                </div>
+                <?php if($post['img'] !== ''):?>
+                    <div class="container-sm">
+                        <img src="<?= $post->img; ?>" class="card-text" height="100">
+                    </div>
+                <?php endif;?>
             </td>
             <td>
                 <a href="/post/<?=$post->id?>"><?= $post->title; ?></a>
@@ -32,11 +34,16 @@
             <td><?= isset($data['comments'][$post->id]) ? $data['comments'][$post->id] : 0; ?></td>
             <td>
                 <form action="/admin/posts?page=<?= $data['pagination']->currentPage?>" method="post">
-                    <?php if ($post->is_active == '1') :?>
-                        <button type="submit" name="active" value="<?= $post->id ?>_0" class="btn btn-outline-danger">Архивировать</button>
-                    <?php else : ?>
-                        <button type="submit" name="active" value="<?= $post->id ?>_1" class="btn btn-outline-success">Разархивировать</button>
-                    <?php endif; ?>
+                    <div class="row my-2">
+                        <?php if ($post->is_active == '1') :?>
+                            <button type="submit" name="active" value="<?= $post->id ?>_0" class="btn btn-outline-danger">Архивировать</button>
+                        <?php else : ?>
+                            <button type="submit" name="active" value="<?= $post->id ?>_1" class="btn btn-outline-success">Разархивировать</button>
+                        <?php endif; ?>
+                    </div>
+                    <div class="row my-2">
+                        <a class="btn btn-outline-primary" href="/post/edit/<?= $post->id; ?>" role="button">Редактировать</a>
+                    </div>
                 </form>
             </td>
         </tr>

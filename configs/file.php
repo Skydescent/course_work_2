@@ -10,7 +10,9 @@ return [
 
         ]
     ],
-    'maxSize' => 2097152,
+    'maxSize' => [
+        'default' => 2097152
+    ],
     'filePath' => [
         'img' => '/uploads/img/'
     ]

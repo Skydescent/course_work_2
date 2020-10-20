@@ -15,23 +15,23 @@
             ):
                 ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin/posts/">Статьи</a>
+                    <a class="nav-link" href="/admin/posts">Статьи</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin/comments/">Комментарии</a>
+                    <a class="nav-link" href="/admin/comments">Комментарии</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin/pages/">Страницы</a>
+                    <a class="nav-link" href="/admin/pages">Страницы</a>
                 </li>
                 <?php if ($_SESSION['auth_subsystem']['role'] == 'admin'):?>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/users/">Пользователи</a>
+                        <a class="nav-link" href="/admin/users">Пользователи</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/subscriptions/">Подписки</a>
+                        <a class="nav-link" href="/admin/subscriptions">Подписки</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/settings/">Доп. настройки</a>
+                        <a class="nav-link" href="/admin/settings">Доп. настройки</a>
                     </li>
                 <?php endif; ?>
             <?php endif; ?>
@@ -51,10 +51,11 @@
                     </div>
                 </li>
             <?php else: ?>
-                <li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/user/profile">Личный кабинет</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/profile">Личный кабинет</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/logout">Выйти</a>
                 </li>
             <?php endif; ?>
         </ul>
@@ -76,8 +77,6 @@
                 <?php endif; ?>
             </div>
         </div>
-        <?php \helpers\debug($_SESSION);?>
-        <?php \helpers\debug($_REQUEST);?>
-        <?php \helpers\debug($_FILES);?>
 
+<?php //\helpers\debug($_SESSION)?>
 

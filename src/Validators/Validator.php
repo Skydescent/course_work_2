@@ -139,7 +139,7 @@ class Validator
     {
         $meth = 'minLength';
         if (array_key_exists($fieldName, $this->rules[$meth]) &&
-            strlen($value) < $this->rules[$meth][$fieldName]
+            mb_strlen($value) < $this->rules[$meth][$fieldName]
         ) {
             $this->addErrorMsgByCat($meth,$fieldName, [$this->rules[$meth][$fieldName]]);
         }

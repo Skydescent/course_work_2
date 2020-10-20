@@ -6,18 +6,39 @@
 <?php foreach ($data['posts'] as $post) : ?>
     <div class="row mx-lg-5">
         <div class="col py-3">
-                <div class="card" style="width: 60rem;">
-                    <div class="card-body">
-                        <h5 class="card-title"><?= $post->title; ?></h5>
-                        <h6 class="card-subtitle mb-2 text-muted"><?= \helpers\makeShortAnnotation($post->text); ?></h6>
-                        <a href="/post/<?= $post->id; ?>" class="btn btn-link stretched-link">Читать далее -></a>
-                        <div class="container-sm">
-                            <img src="<?= $post->img; ?>" class="card-text" alt="<?= $post->title; ?>" height="200">
-                        </div>
-                        <p class="card-text"><small class="text-muted">Дата публикации: <?= \helpers\mainPostDateFormat($post->created_at); ?></small></p>
+            <div class="card" style="width: 60rem;">
+                <div class="card-body">
+                    <div class="container-sm">
+                        <div class="row my-3">
+                            <div class="col">
+                                <h5 class="card-title"><?= $post->title; ?></h5>
+                                <h6 class="card-subtitle mb-2 text-muted"><?= \helpers\makeShortAnnotation($post->text); ?></h6>
+                                <a class="btn btn-outline-info" href="/post/<?= $post->id; ?>" role="button">Читать далее -></a>
 
+                                <?php if (isset($_SESSION['auth_subsystem']) && (
+                                        $_SESSION['auth_subsystem']['id'] == $post['user_id'] ||
+                                        $_SESSION['auth_subsystem']['role'] == 'admin' ||
+                                        $_SESSION['auth_subsystem']['role'] == 'manager')
+                                ) : ?>
+                                    <a class="btn btn-outline-primary" href="/post/edit/<?= $post->id; ?>" role="button">Редактировать</a>
+                                <?php endif;?>
+                            </div>
+                        </div>
+                        <?php if ($post->img !== ''):?>
+                            <div class="row my-3">
+                                <div class="col">
+                                    <img src="<?= $post->img; ?>" class="cart-text" alt="<?= $post->title; ?>" height="200">
+                                </div>
+                            </div>
+                        <?php endif;?>
+                        <div class="row my-3">
+                            <div class="col">
+                                <p class="card-text"><small class="text-muted">Дата публикации: <?= \helpers\mainPostDateFormat($post->created_at); ?></small></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
 <?php endforeach; ?>
@@ -51,7 +72,7 @@
                 <div class="input-group-prepend">
                     <div class="input-group-text">@</div>
                 </div>
-                <input  name="email" type="text" class="form-control" placeholder="Email" value="<?= isset($_SESSION['form_data']['email']) ? helpers\h($_SESSION['form_data']['email']) : ''; ?>">
+                <input  name="email" type="text" class="form-control" placeholder="Email" value="<?= isset($_SESSION['form_data']['email']) ? helpers\htmlSecure($_SESSION['form_data']['email']) : ''; ?>">
                 <?php if (isset($_SESSION['error']['email'])) : ?>
                     <div class="p-1 mt-2 alert alert-danger">
                         <?= $_SESSION['error']['email']; unset($_SESSION['error']['email']);?>

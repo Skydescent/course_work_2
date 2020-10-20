@@ -19,9 +19,11 @@
         <tr>
             <th scope="row"><?= $user->id; ?></th>
             <td>
-                <div class="container-sm">
-                    <img src="<?= $user->img; ?>" class="card-text" height="100">
-                </div>
+                <?php if($user['img'] !== ''):?>
+                    <div class="container-sm">
+                        <img src="<?= $user->img; ?>" class="card-text" height="100">
+                    </div>
+                <?php endif;?>
             </td>
             <td><?= $user->login; ?></td>
             <td><?= $user->email; ?></td>
@@ -37,7 +39,7 @@
                                 <option  <?= $value?>><?= $role->name ?></option>
                             <?php endforeach;?>
                         </select>
-                        <button type="submit" class="btn btn-primary my-1 btn-outline-primary">Изменить</button>
+                        <button type="submit" class="btn btn-primary">Изменить</button>
                     </form>
                 </td>
                 <td>

@@ -3,11 +3,14 @@
 namespace App\Controller;
 
 use App\Controller;
+use App\Exception\NoRightsException;
 use App\Helpers\Sender;
 use App\Model;
 
+use App\Model\Comment;
+use App\Model\PostsList;
 use App\View\View;
-use function helpers\h;
+use function helpers\htmlSecure;
 use function helpers\redirect;
 
 class PostController extends Controller
@@ -20,12 +23,13 @@ class PostController extends Controller
      */
     public  function post(string $id)
     {
-        $post = Model\PostsList::whereId($id)->where('is_active', '<>', '0')->first();
+        $post = PostsList::whereId($id)->where('is_active', '<>', '0')->first();
+        //var_dump('PostController.post');
         if (is_null($post)) {
             $_SESSION['error']['page'] = 'Доступ к статье закрыт, либо она не существует';
             redirect();
         }
-        $comments = Model\Comment::query()
+        $comments = Comment::query()
             ->where('post_id', '=', $id)
             ->LeftJoin('users', 'author_id', '=', 'users.id')
             ->get();
@@ -36,7 +40,7 @@ class PostController extends Controller
                 redirect();
             }
 
-            $data = h($_POST);
+            $data =htmlSecure($_POST);
 
             if ($data['text'] == '') {
                 $_SESSION['error']['page'] = 'Пустой комментарий оставить нельзя!';
@@ -46,7 +50,7 @@ class PostController extends Controller
             $data['author_id'] = $_SESSION['auth_subsystem']['id'];
             $data['is_applied'] = '0';
             $data['created_at'] = date('Y-m-d',time());
-            $comment = new Model\Comment();
+            $comment = new Comment();
             $comment->load($data);
             unset($comment->id);
             if ($comment->save()) {
@@ -70,41 +74,98 @@ class PostController extends Controller
     public function new()
     {
         if (!empty($_POST) && isset($_POST['add_post'])) {
-            $post = new Model\PostsList();
-            $data = h($_POST);
 
-            $file = $_FILES['img']['size'] !== 0 ? $post->uploadFile($_FILES['img'], 'img', 'img', $post->login) : null;
-
-            if (
-                !$post->validate($data) ||
-                $file === false
-            ) {
-                $post->getErrors();
-                $_SESSION['form_data'] = h($data);
-                redirect();
-            }
-
-            if ($file !== null) {
-                if ($post->img !== '') {
-                    $post->deleteImg();
-                }
-                $data['img'] = $file;
-            }
+            $post = new PostsList();
+            $data =htmlSecure($_POST);
             $data['user_id'] = $_SESSION['auth_subsystem']['id'];
             $data['created_at'] = date("Y-m-d");
             $data['is_active'] = 1;
-            $post->load($data);
-            $post->save();
-            $_SESSION['success'] = 'Статья успешно добавлена';
 
-            $sender = new Sender($post->title, $post->text, BASE_URL . "/post/$post->id");
-            $sender->send();
+            $this->createPost($data, $post, 'Статья успешно добавлена');
+
+            $this->send($post->title, $post->text,"/post/$post->id");
 
             redirect('/');
 
 
         }
-        return $this->getView(__METHOD__);
+        return $this->getView();
+    }
+
+    /**
+     * Получает и обрабатывает данные для отображения формы редактирования статьи.
+     *
+     * @param $id
+     * @return View
+     */
+    public function edit(string $id)
+    {
+        $post = null;
+        if (isset($_SESSION['auth_subsystem'])) {
+            if ($_SESSION['auth_subsystem']['role'] == 'admin' || $_SESSION['auth_subsystem']['role'] == 'manager' ) {
+                $post = PostsList::whereId($id)->first();
+            } else {
+                $post = PostsList::whereId($id)->where('user_id', '=', $_SESSION['auth_subsystem']['id'])->first();
+            }
+        }
+
+        if (is_null($post)) {
+            throw new NoRightsException();
+        }
+
+        if (!empty($_POST) && isset($_POST['edit_post'])) {
+            $data =htmlSecure($_POST);
+            $this->createPost($data, $post, 'Статья успешно обновлена');
+            redirect("/");
+        }
+
+        return $this->getView(__METHOD__, ['post' => $post]);
+    }
+
+
+    /**
+     * Валидирует и загружает в модель данные
+     *
+     * @param $data
+     * @param $postModel
+     * @param string $successMsg
+     */
+    private function createPost($data, $postModel, $successMsg = '')
+    {
+        $file = $this->getFile($postModel);
+
+        if (
+            !$postModel->validate($data) ||
+            $file === false
+        ) {
+            $postModel->getErrors();
+            $_SESSION['form_data'] =htmlSecure($data);
+            redirect();
+        }
+
+        if ($file !== null) {
+            if ($postModel->img !== '') {
+                $postModel->deleteImg();
+            }
+            $data['img'] = $file;
+        }
+
+        $postModel->load($data);
+        $postModel->save();
+        $_SESSION['success'] = $successMsg;
+    }
+
+    /**
+     * Отправляет в лог сообщения пользователями о добавлении новой статьи
+     *
+     * @param $title
+     * @param $text
+     * @param $postUrl
+     */
+    private function send ($title, $text, $postUrl)
+    {
+        $sender = new Sender($title, $text, BASE_URL . $postUrl);
+        $sender->send();
     }
 
 }

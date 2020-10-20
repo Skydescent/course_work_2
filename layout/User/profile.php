@@ -3,7 +3,9 @@
         <div class="row">
             <div class="col">
                 <h3>Ваш профиль</h3>
-                <img src="<?=$_SESSION['auth_subsystem']['img']?>" alt="profile_picture" class="img-thumbnail rounded float-right">
+                <?php if($_SESSION['auth_subsystem']['img'] !== '') :?>
+                    <img src="<?=$_SESSION['auth_subsystem']['img']?>" alt="profile_picture" class="img-thumbnail rounded float-right">
+                <? endif; ?>
             </div>
             <div class="col">
 
@@ -84,10 +86,6 @@
                     <div class="row">
                         <div class="col">
                             <button type="submit" class="btn btn-secondary w-100">Изменить</button>
-                        </div>
-                        <div class="col"></div>
-                        <div class="col">
-                            <a href="/user/logout" class="float-right align-text-bottom">Выйти</a>
                         </div>
                     </div>
 

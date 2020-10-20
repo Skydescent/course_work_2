@@ -151,6 +151,16 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
+     * Удаляет файл изображения, если он существует
+     */
+    public function deleteImg()
+    {
+        if(file_exists(ROOT . $this->img)) {
+            unlink(ROOT . $this->img);
+        }
+    }
+
+    /**
      * Проверяет уникальность записи(модлели) в таблице БД
      *
      * @param $fieldNames
@@ -162,11 +172,9 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         foreach ($fieldNames as $field) {
             $unit = $this->getDbUnit($field);
             if ($unit !== false) {
-                if ($unit->$field = $this->attributes[$field]) {
                     $error = [$field => ["Этот $field уже занят"]];
                     $this->addErrors($error);
                     $isUnique = false;
-                }
             }
         }
         return $isUnique;
@@ -176,6 +184,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      * Получает объект модели по названию атрибута
      *
      * @param $field
+     * @param $valueToCheck
      * @return false
      */
     protected function getDbUnit($field)
