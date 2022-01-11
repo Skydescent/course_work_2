@@ -1,8 +1,8 @@
 <?php
 return [
     'driver' => 'mysql',
-    'host' => 'localhost',
+    'host' => 'db',
     'username' => 'root',
-    'password' => '',
+    'password' => 'cms_db',
     'database' => 'cms_db',
 ];

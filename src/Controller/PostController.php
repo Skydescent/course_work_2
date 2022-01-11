@@ -76,7 +76,7 @@ class PostController extends Controller
         if (!empty($_POST) && isset($_POST['add_post'])) {
 
             $post = new PostsList();
-            $data =htmlSecure($_POST);
+            $data = htmlSecure($_POST);
             $data['user_id'] = $_SESSION['auth_subsystem']['id'];
             $data['created_at'] = date("Y-m-d");
             $data['is_active'] = 1;
@@ -87,9 +87,8 @@ class PostController extends Controller
 
             redirect('/');
 
-
         }
-        return $this->getView();
+        return $this->getView(__METHOD__);
     }
 
     /**
