@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Controller;
 use App\Helpers\Sender;
 use App\Model;
+use App\Model\Setting;
 use App\View\View;
 
 use function helpers\htmlSecure;
@@ -23,7 +24,8 @@ class MainController extends Controller
         $total = Model\PostsList::query()->where('is_active', '<>', '0')->count();
 
         $pagination = $this->paginate($total, '/');
-        $perPage = $pagination->getPerPage();
+        $perPageSetting = Setting::getDbSettingByFullName('pagination.selects.default');
+        $perPage = $perPageSetting ? (int) $perPageSetting->name : $pagination->getPerPage();
 
         $start = $pagination->getStart();
         $posts = Model\PostsList::query()

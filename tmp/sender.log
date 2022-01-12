@@ -4,7 +4,7 @@
 Адресат отправки miha@mih.com
 ****************
 Заголовок письма: На сайте добавлена новая запись: Тестовая статья дополнительно
-  Содержимое письма:  Новая статья: Тестовая статья дополнительно
+  Содержимое письма:  При появлении новой статьи в блоге текст письма пишется в лог tmp/sender.logНовая статья: Тестовая статья дополнительно
 Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo. Nemo enim ipsam voluptatem, quia voluptas sit, aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos, qui ratione voluptatem sequi nesciunt, neque porro quisquam est...
 Читать: http://blogpost/post/10
 

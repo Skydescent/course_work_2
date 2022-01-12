@@ -1,3 +1,4 @@
 /vendor/
 /vendor/autoload.php
 /docker/mysql/dbdata
+/.idea
